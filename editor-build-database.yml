@@ -1,0 +1,22 @@
+# This file is for looks only
+default: &default
+  adapter: postgresql
+  encoding: unicode
+
+production:
+  <<: *default
+  database: nsl
+  username: nsl
+  password: nsl
+
+development:
+  <<: *default
+  database: nsl
+  username: nsl
+  password: nsl
+
+test:
+  <<: *default
+  database: nsl
+  username: nsl
+  password: nsl

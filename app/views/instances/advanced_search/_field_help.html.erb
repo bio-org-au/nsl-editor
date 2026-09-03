@@ -200,7 +200,7 @@ word "darwin" followed by a space, one or more other characters followed by "bar
   <% [
          {field_name: 'tree-dist-matches:', description: "Regular expression matches on the Distribution profile on the accepted tree.  Case-insensitive."},
          {field_name: 'tree-comment-matches:', description: "Regular expression matches on the Comment profile on the accepted tree.  Case-insensitive."},
-         {field_name: 'syn-conflicts-with-loader-batch:', description: "A special loader-related search for synomyms in the current accepted tree that match accepted/excluded names in a loader batch. Note: loader is not activated for all databases."},
+         {field_name: 'syn-conflicts-with-loader-batch:', description: "A special loader-related search for synonyms in the current accepted tree that match accepted/excluded names in a loader batch. Note: loader is not activated for all databases."},
      ].each do |val| %>
     <tr>
       <td class="width-20-percent">
@@ -260,6 +260,8 @@ word "darwin" followed by a space, one or more other characters followed by "bar
          {field_name: 'does-not-cite-an-instance:', description: ""},
          {field_name: 'is-not-cited-by-an-instance:', description: ""},
          {field_name: 'is-novelty:', description: "Primary instance type e.g. tax. nov.."},
+         {field_name: 'is-standalone:', description: "Instance type is standalone"},
+         {field_name: 'is-not-standalone:', description: "Instance type is not standalone"},
          {field_name: 'is-tax-nov-for-orth-var-name:', description: "Instance is a tax. nov. type but the name is an orth. var."},
          {field_name: 'species-or-below-syn-with-genus-or-above:',
           description: "Instance synonymises a name ranked species or below with a name that is genus or above."},

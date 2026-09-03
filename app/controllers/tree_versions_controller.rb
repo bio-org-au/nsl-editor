@@ -122,10 +122,10 @@ class TreeVersionsController < ApplicationController
       @working_draft = nil
       render "publish"
     else
-      @message = json_result(response)
+      @message = json&.error || 'Unknown error trying to publish tree'
       render "publish_error"
     end
-  rescue Unauthorized, RestClient::Unauthorized, RestClient::Forbidden => e
+  rescue ::Unauthorized, ::RestClient::Unauthorized, ::RestClient::Forbidden => e
     @message = json_error(e)
     render "publish_error", status: :forbidden
   rescue RestClient::ExceptionWithResponse => e
@@ -169,5 +169,18 @@ class TreeVersionsController < ApplicationController
   def json_payload(result)
     json = json(result)
     json&.payload
+  end
+
+  def json_error(err)
+    logger.error(err)
+    json = JSON.parse(err.http_body, object_class: OpenStruct)
+    if json&.error
+      logger.error(json.error)
+      json.error
+    else
+      "Tree Version Error: #{json&.to_s || err.to_s}"
+    end
+  rescue StandardError
+    err.to_s
   end
 end

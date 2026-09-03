@@ -16,9 +16,12 @@
    ========================================================================== */
 
 /* --- Typography: preserve the app's compact 14px density (BS3 default) -------
-   BS5 defaults to 16px/1.5 which would reflow every tuned form. */
+   BS5 defaults to 16px/1.5 which would reflow every tuned form.
+   Put back the BS3 font stack (Helvetica Neue, Helvetica, Arial, sans-serif) so the
+*/
 body {
   font-size: 14px;
+  font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
 }
 
 /* Headings: BS5's reboot zeroes heading top margins (margin-top:0); BS3 gave
@@ -29,18 +32,31 @@ body {
 h1, h2, h3 {
   margin-top: 20px;
   margin-bottom: 10px;
+  line-height: 1.1;
 }
 h4, h5, h6 {
   margin-top: 10px;
   margin-bottom: 10px;
+  line-height: 1.1;
 }
 
 h5 {
   font-size: 14px;
+  line-height: 1.1;
 }
 
 h6 {
   font-size: 12px;
+  line-height: 1.1;
+}
+
+label {
+  font-weight: 700;
+}
+
+button, input, optgroup, select, textarea {
+  margin: 0;
+  font: inherit;
 }
 
 /* --- Links: BS3's reboot set anchors to `text-decoration: none` and only
@@ -48,7 +64,6 @@ h6 {
    BS3 also used link color #337ab7, darkening to #23527c on hover/focus; BS5
    changed both the palette and dropped the hover color shift. Restore both. */
 a {
-  color: #337ab7;
   text-decoration: none;
 }
 a:hover,
@@ -56,13 +71,34 @@ a:focus {
   color: #23527c;
   text-decoration: underline;
 }
+a:not([href]) {
+  color: #606060;
+}
+
+.btn {
+  font-size: 14px;
+  border-radius: 4px;
+}
 .btn,
 .btn:hover,
 .btn:focus,
 .btn:active {
   text-decoration: none;
 }
-
+.input-group-btn:first-child>.btn,
+.input-group-btn:first-child>.btn-group {
+  margin-right: 0;
+}
+.input-group .form-control:first-child,
+.input-group-addon:first-child,
+.input-group-btn:first-child>.btn,
+.input-group-btn:first-child>.btn-group>.btn,
+.input-group-btn:first-child>.dropdown-toggle,
+.input-group-btn:last-child>.btn-group:not(:last-child)>.btn,
+.input-group-btn:last-child>.btn:not(:last-child):not(.dropdown-toggle) {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
 /* --- .hidden : CRITICAL. BS3 shipped this; BS5 removed it. The layout and
    tabs.js use .hidden to show/hide the main-body containers and tab panels.
    Without this, every hidden container renders at once. ----------------------- */
@@ -109,6 +145,14 @@ a:focus {
   margin-bottom: 15px;
 }
 
+.form-control {
+  font-size: 14px;
+}
+
+textarea.form-control {
+  height: auto;
+}
+
 /* Sizing lock so the app's existing `.form-control { height: 26px }` override
    (in components/new-for-rails-6.css) doesn't clip text under BS5's larger
    default padding/line-height. Keeps typeahead + select2 inputs aligned. */
@@ -119,11 +163,33 @@ select.form-control {
   line-height: 1.4;
 }
 
+.btn:not([class*="btn-"]) {
+  --bs-btn-color: #333;
+  --bs-btn-bg: rgb(239, 239, 239);
+  --bs-btn-border-color: rgb(239, 239, 239);
+  --bs-btn-hover-color: #333;
+  --bs-btn-hover-bg: rgb(223, 223, 223);
+  --bs-btn-hover-border-color: rgb(223, 223, 223);
+  --bs-btn-active-color: #333;
+  --bs-btn-active-bg: rgb(211, 211, 211);
+  --bs-btn-active-border-color: rgb(211, 211, 211);
+  --bs-btn-focus-shadow-rgb: 173, 173, 173;
+}
+
 /* --- Buttons: .btn-default was removed in BS5. Re-create the BS3 light look. - */
 .btn-default {
   color: #333;
   background-color: #fff;
   border-color: #ccc;
+  --bs-btn-color: #333;
+  --bs-btn-bg: #fff;
+  --bs-btn-border-color: #ccc;
+  --bs-btn-hover-color: #333;
+  --bs-btn-hover-bg: #e6e6e6;
+  --bs-btn-hover-border-color: #adadad;
+  --bs-btn-active-color: #333;
+  --bs-btn-active-bg: #e6e6e6;
+  --bs-btn-active-border-color: #adadad;
 }
 .btn-default:hover,
 .btn-default:focus,
@@ -132,6 +198,27 @@ select.form-control {
   color: #333;
   background-color: #e6e6e6;
   border-color: #adadad;
+}
+#query-submit {
+  color: #333;
+  background-color: lightgrey;
+  border-color: lightgrey;
+}
+#query-submit:hover,
+#query-submit:focus,
+#query-submit:active {
+  color: #333;
+  background-color: #fff;
+  border-color: #ccc;
+  --bs-btn-color: #333;
+  --bs-btn-bg: #fff;
+  --bs-btn-border-color: #ccc;
+  --bs-btn-hover-color: #333;
+  --bs-btn-hover-bg: #e6e6e6;
+  --bs-btn-hover-border-color: #adadad;
+  --bs-btn-active-color: #333;
+  --bs-btn-active-bg: #e6e6e6;
+  --bs-btn-active-border-color: #adadad;
 }
 
 /* CRITICAL: contextual button colours when the variant class is used WITHOUT
@@ -249,6 +336,12 @@ select.form-control {
   --bs-btn-disabled-opacity: 1;
 }
 
+#remove_name_placement:disabled,
+#delete_distribution_btn:disabled,
+#delete_comment_btn:disabled {
+  opacity: 0.65;
+}
+
 /* The search submit (.btn.search-btn) has its own lightgrey fill; when disabled
    give it a muted, still-opaque grey so it reads as disabled without going
    see-through. */
@@ -261,6 +354,17 @@ select.form-control {
 /* --- Float helpers: BS5 renamed pull-left/right to float-start/end. --------- */
 .pull-left  { float: left  !important; }
 .pull-right { float: right !important; }
+
+/* --- custom-control/custom-checkbox: BS4 checkbox classes dropped in BS5 -------
+   A few labels (e.g. the tree-tab "Show higher ranks" toggle) wrap plain text +
+   a raw <input type=checkbox> in `label.custom-control.custom-checkbox`. Those
+   BS4 classes style nothing under BS5, so the checkbox falls back to
+   vertical-align: baseline and floats above the label text. Centre it against
+   the text (matching BS5's own .form-check-input alignment). */
+label.custom-checkbox input[type="checkbox"] {
+  vertical-align: middle;
+  margin-left: 0.25rem;
+}
 
 /* --- Misc removed helpers --------------------------------------------------- */
 .center-block { display: block; margin-right: auto; margin-left: auto; }
@@ -370,7 +474,6 @@ select.form-control {
   flex: 0 0 auto;
 }
 .input-group > #query-string-field {
-  flex: 1 0 auto;
   min-width: 16em;
   margin-top: 0;        /* beats input#query-string-field{margin-top:3px} */
   margin-bottom: 0;
@@ -537,12 +640,13 @@ ul.navbar-nav li a.dropdown-toggle {
 }
 .nav-tabs > li > a {
   display: block;
-  padding: 12px 16px;
+  padding: 10px 15px;
   color: #606060;
   text-decoration: none;
+  line-height: 1.42857143;
   border: 1px solid transparent;
-  border-top-left-radius: 4px;
-  border-top-right-radius: 4px;
+  border-radius: 4px 4px 0 0;
+  margin-right: 2px;
 }
 .nav-tabs > li > a:hover,
 .nav-tabs > li > a:focus {
@@ -563,6 +667,10 @@ ul.navbar-nav li a.dropdown-toggle {
   border-color: #dee2e6 #dee2e6 #fff;
 }
 
+.fade.in {
+  opacity: 1;
+}
+
 /* Table styles */
 .table > thead > tr > th,
 .table > tbody > tr > th,
@@ -574,12 +682,41 @@ ul.navbar-nav li a.dropdown-toggle {
   border-bottom: 1px solid #ddd;
 }
 
+/* --- .table-condensed was renamed to .table-sm in BS4/5, so the app's markup
+   (which still uses .table-condensed) matches nothing under BS5 and its compact
+   tables lost the BS3 5px cell padding. So we re-create the BS3 rule here. --------------- */
+.table-condensed > thead > tr > th,
+.table-condensed > tbody > tr > th,
+.table-condensed > tfoot > tr > th,
+.table-condensed > thead > tr > td,
+.table-condensed > tbody > tr > td,
+.table-condensed > tfoot > tr > td {
+  padding: 5px;
+}
+
+tr.search-result td.main-content {
+  padding: 5px !important;
+}
+
+/* For the green icon alignment with text */
+tr.search-result td.nsl-tiny-icon-container {
+  padding-top: 6px !important;
+}
+
 table[border] {
   border-collapse: collapse;
 }
 table[border] th,
 table[border] td {
   border: 1px solid #999;
+}
+
+dd {
+  margin-bottom: 0;
+}
+
+.text-right {
+  text-align: right;
 }
 
 /* Search form */
@@ -591,8 +728,16 @@ input#query-submit {
   border-bottom: 1px solid lightgray;
   border-top: 1px solid lightgray;
   border-left: 1px solid lightgray;
+  border-bottom-right-radius: 4px;
+  border-top-right-radius: 4px;
   margin-top: 3px;
-  padding-top: 0;
+  padding-top: 2px;
+  padding-bottom: 6px;
+  margin-right: 0.5em;
+}
+
+tbody > tr.results-row-filler  > td{
+  border-bottom: none;
 }
 
 #search-field-and-buttons-container input#query-submit {
@@ -626,9 +771,15 @@ div#search-field-and-buttons-container #search-target-button-text {
   white-space: nowrap;
 }
 
+#search-result-details textarea,
+#search-result-details input {
+  margin: 4px 0 0 0;
+  vertical-align: inherit;
+}
+
 /* Search result tabs */
 #top-navbar ul#search-results-tabset {
-  top: 108px;
+  top: 112px;
 }
 
 #top-navbar ul#search-results-tabset li a {
@@ -644,6 +795,10 @@ tr.search-result.batch-stack td {
   border-bottom: none;
 }
 
+dd, dt {
+  line-height: 1.42857143;
+}
+
 /* dl-horizontal (e.g. instance Notes, cites/cited id, Local trees):
    old-application.css frames the .dl-horizontal container with BOTH a border-top
    and a border-bottom, AND gives every dd a border-bottom. Those container
@@ -654,7 +809,7 @@ tr.search-result.batch-stack td {
    lines; the <hr> dividers already separate sections. dl.dl-horizontal outranks
    old-application.css's .dl-horizontal, which loads after this shim. */
 dl.dl-horizontal {
-  border-top: none;
+  border-top: 1px solid lightgrey;
   border-bottom: none;
 }
 
@@ -665,4 +820,9 @@ dl.dl-horizontal {
 .dl-horizontal dd:empty {
   border-bottom: none;
   padding-top: 0;
+}
+.dl-horizontal dd::after {
+  content: "";
+  display: block;
+  clear: both;
 }
