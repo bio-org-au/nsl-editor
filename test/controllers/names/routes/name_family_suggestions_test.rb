@@ -19,21 +19,21 @@
 require "test_helper"
 
 # Single controller test.
-class NameParentSuggestionsRouteTest < ActionController::TestCase
+class NameFamilySuggestionsRouteTest < ActionController::TestCase
   tests NamesController
-  test "should route to name parent suggestions" do
-    assert_routing "/names/name_parent_suggestions",
+  test "should route to name family suggestions" do
+    assert_routing "/names/name_family_suggestions",
                    controller: "names",
-                   action: "name_parent_suggestions"
+                   action: "name_family_suggestions"
   end
 
   # stimulus-autocomplete asks for the html fragment by extension rather than
-  # by Accept header - see Name::Typeaheads#name_parent_suggestions and
+  # by Accept header - see Name::Typeaheads#name_family_suggestions and
   # AuthorsController#typeahead_on_abbrev's comment for why.
   test "should route the html format to the same action" do
-    assert_routing "/names/name_parent_suggestions.html",
+    assert_routing "/names/name_family_suggestions.html",
                    controller: "names",
-                   action: "name_parent_suggestions",
+                   action: "name_family_suggestions",
                    format: "html"
   end
 end

@@ -18,21 +18,23 @@
 #
 require "test_helper"
 
-# NamesController#name_parent_suggestions, used by the name form's Parent
+# NamesController#name_family_suggestions, used by the name form's Family
 # field, which is now a stimulus-autocomplete field - so the action answers
 # the shared html fragment as well as the json it always has. Mirrors
-# test/controllers/names/suggestions/for_editor/duplicate_test.rb, the
-# sibling field these shared resources were generalised from.
-class NameParentSuggestionsForEditorTest < ActionController::TestCase
+# test/controllers/names/suggestions/for_editor/parent_test.rb, the sibling
+# field migrated just before it.
+class NameFamilySuggestionsForEditorTest < ActionController::TestCase
   tests NamesController
   setup do
     @name = names(:a_species)
   end
 
-  def get_suggestions(term, rank_id: name_ranks(:species).id, format: :html)
-    get(:name_parent_suggestions,
+  # name_id and rank_id ride along because the field sends them, as the
+  # typeahead.js widget before it did.
+  def get_suggestions(term, format: :html)
+    get(:name_family_suggestions,
         params: { term: term,
-                  rank_id: rank_id,
+                  rank_id: name_ranks(:species).id,
                   name_id: @name.id,
                   format: format },
         session: { username: "fred",
@@ -48,34 +50,30 @@ class NameParentSuggestionsForEditorTest < ActionController::TestCase
                   *args, &block)
   end
 
-  test "should get name parent suggestions as an html fragment" do
-    get_suggestions("a_gen")
+  test "should get name family suggestions as an html fragment" do
+    get_suggestions("a_fam")
 
     assert_response :success
     assert_select_in_body(
-      "li.autocomplete-result[data-autocomplete-value='#{names(:a_genus).id}']",
+      "li.autocomplete-result[data-autocomplete-value='#{names(:a_family).id}']",
       true
     )
   end
 
   test "should bold the matched part of the name" do
-    get_suggestions("a_gen")
+    get_suggestions("a_fam")
 
-    assert_includes @response.body, "<strong>a_gen</strong>"
+    assert_includes @response.body, "<strong>a_fam</strong>"
   end
 
-  # Picking a parent also fills in the form's Family field, so each option
-  # carries the suggested parent's own family - see
-  # app/javascript/controllers/name_parent_family_controller.js.
-  test "should publish the suggested parent's family on the option" do
+  # Only names of family rank are offered - the field is asking which family
+  # the name belongs to, not for any name at all.
+  test "should not suggest a name that is not a family" do
     get_suggestions("a_gen")
 
     assert_response :success
-    assert_select_in_body(
-      "li.autocomplete-result[data-family-id='#{names(:a_family).id}']" \
-      "[data-family-value='#{names(:a_family).full_name}']",
-      true
-    )
+    assert_select_in_body "li.autocomplete-result[aria-disabled='true']",
+                          text: "No matches"
   end
 
   test "should render a no matches option for a term matching nothing" do
@@ -95,10 +93,10 @@ class NameParentSuggestionsForEditorTest < ActionController::TestCase
   end
 
   test "should still answer json" do
-    get_suggestions("a_gen", format: :json)
+    get_suggestions("a_fam", format: :json)
 
     assert_response :success
     suggestions = JSON.parse(@response.body)
-    assert_includes suggestions.map { |s| s["id"] }, names(:a_genus).id
+    assert_includes suggestions.map { |s| s["id"] }, names(:a_family).id
   end
 end
