@@ -3,6 +3,36 @@
 require "rails_helper"
 
 RSpec.describe Name, type: :model do
+  describe ".soft_deleted" do
+    let!(:name) { create(:name) }
+    let!(:soft_deleted_name) { create(:name, deleted_at: Time.current) }
+
+    subject { described_class.soft_deleted }
+
+    it "returns names with a deleted_at timestamp" do
+      expect(subject).to include(soft_deleted_name)
+    end
+
+    it "does not return names without a deleted_at timestamp" do
+      expect(subject).not_to include(name)
+    end
+
+    context "when chained off the children association" do
+      let!(:soft_deleted_child) { create(:name, parent: name, deleted_at: Time.current) }
+      let!(:live_child) { create(:name, parent: name) }
+
+      subject { name.children.soft_deleted }
+
+      it "returns only the soft deleted children" do
+        expect(subject).to contain_exactly(soft_deleted_child)
+      end
+
+      it "does not return soft deleted names belonging to another parent" do
+        expect(subject).not_to include(soft_deleted_name)
+      end
+    end
+  end
+
   describe "associations" do
     describe "name_resources dependent destroy" do
       context "when name has associated name_resources" do
@@ -107,6 +137,41 @@ RSpec.describe Name, type: :model do
 
       it "returns true regardless of name_resources" do
         expect(name.no_name_resource_dependents?).to be true
+      end
+    end
+  end
+
+  describe "#allow_soft_delete?" do
+    let(:name) { create(:name) }
+
+    context "when soft_delete_enabled is false" do
+      before do
+        allow(Rails.configuration).to receive(:try).with(:soft_delete_enabled).and_return(false)
+      end
+
+      it "returns false without calling the check delete service" do
+        expect(::Names::CheckDeleteService).not_to receive(:new)
+        expect(name.allow_soft_delete?).to be false
+      end
+    end
+
+    context "when soft_delete_enabled is true" do
+      let(:result) { instance_double(::Names::CheckDeleteService::Result) }
+      let(:service) { instance_double(::Names::CheckDeleteService, execute: result) }
+
+      before do
+        allow(Rails.configuration).to receive(:try).with(:soft_delete_enabled).and_return(true)
+        allow(::Names::CheckDeleteService).to receive(:new).with(name: name).and_return(service)
+      end
+
+      it "returns true when the service allows a soft delete" do
+        allow(result).to receive(:soft_delete_allowed?).and_return(true)
+        expect(name.allow_soft_delete?).to be true
+      end
+
+      it "returns false when the service does not allow a soft delete" do
+        allow(result).to receive(:soft_delete_allowed?).and_return(false)
+        expect(name.allow_soft_delete?).to be false
       end
     end
   end

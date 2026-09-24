@@ -90,17 +90,18 @@ class Name < ApplicationRecord
   self.primary_key = "id"
   self.sequence_name = "nsl_global_seq"
 
-  include NameScopable
+  include Name::Scopable
   include AuditScopable
-  include NameValidatable
-  include NameParentable
-  include NameFamilyable
-  include NameNamePathable
-  include NameTreeable
-  include NameNamable
-  include NameAuthorable
-  include NameRankable
-  include NameEnterable
+  include UserTrackable
+  include Name::Validatable
+  include Name::Parentable
+  include Name::Familyable
+  include Name::NamePathable
+  include Name::Treeable
+  include Name::Namable
+  include Name::Authorable
+  include Name::Rankable
+  include Name::Enterable
   include Name::Loadable
   include Name::InstancesCopyable
 
@@ -191,6 +192,12 @@ class Name < ApplicationRecord
       comments.blank? &&
       duplicates.blank? &&
       !family_dependents?
+  end
+
+  def allow_soft_delete?
+    return false unless Rails.configuration.try(:soft_delete_enabled)
+
+    ::Names::CheckDeleteService.new(name: self).execute.soft_delete_allowed?
   end
 
   def no_name_resource_dependents?

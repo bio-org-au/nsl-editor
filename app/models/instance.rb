@@ -75,8 +75,9 @@
 #
 class Instance < ApplicationRecord
   include ActionView::Helpers::TextHelper
-  include InstanceTreeable
-  include InstanceInTaxonomy
+  include Instance::Treeable
+  include Instance::InTaxonomy
+  include UserTrackable
   include Instance::ForCopyToLoaderName
   include Instance::CopyableToNewName
   include Instance::Displayable
@@ -112,6 +113,8 @@ class Instance < ApplicationRecord
       .where(product_item_configs: {id: product_item_config_id})
       .distinct
   }
+
+  scope :soft_deleted, -> { where.not(deleted_at: nil) }
 
   attr_accessor :copy_profile_items
 
@@ -376,6 +379,7 @@ class Instance < ApplicationRecord
   validate :restrict_change_to_accepted_concept_synonymy
   validate :only_one_primary_instance_per_name
   validate :relationship_cannot_be_standalone_type
+  validate :relationship_cannot_have_bhl_url
 
   before_validation :set_defaults
   before_create :set_defaults
@@ -517,6 +521,13 @@ class Instance < ApplicationRecord
     return unless instance_type.standalone?
 
     errors.add(:base, "A relationship instance cannot be a standalone type")
+  end
+
+  def relationship_cannot_have_bhl_url
+    return if bhl_url.blank?
+    return unless instance_type&.relationship?
+
+    errors.add(:base, "A relationship instance cannot have a bhl url value")
   end
 
   def apc_instance_notes
@@ -700,6 +711,12 @@ class Instance < ApplicationRecord
       children.empty? &&
       not_linked_to_loader_name_matches? &&
       profile_items.blank?
+  end
+
+  def allow_soft_delete?
+    return false unless Rails.configuration.try(:soft_delete_enabled)
+
+    ::Instances::CheckDeleteService.new(instance: self).execute.soft_delete_allowed?
   end
 
   # This is not handled via an instance association because the loader is only

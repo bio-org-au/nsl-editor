@@ -1,32 +1,19 @@
 <% increment_tab_index %>
-
-<% if @name.name_resources.present? %>
-  <br>Will delete the following resources:
-  <ul>
-    <% @name.name_resources.each do |nr| %>
-      <li>
-        <% if nr.resource_host.present? %>
-          <% resource_url = "#{nr.resource_host.resolving_url}#{nr.value}" %>
-          <%= link_to "#{nr.resource_host.name}: #{resource_url}",
-            resource_url,
-            title: "Open resource URL",
-            target: "_blank"
-          %>
-        <% else %>
-          <%= nr.value %>
-        <% end %>
-      </li>
-    <% end %>
-  </ul>
-
-<% end %>
-
 <% if @name.allow_delete? %>
   <%= render 'names/widgets/delete_widgets' %>
+<% elsif @name.allow_soft_delete? %>
+  <% if @name.deleted_at %>
+    Name has been soft-deleted at <%= formatted_timestamp(@name.deleted_at) %>.
+  <% else %>
+    <%= render 'names/widgets/soft_delete_widgets' %>
+  <% end %>
 <% else %>
   <%= render 'names/widgets/cannot_delete_info' %>
 <% end %>
 <br>
+
+
+<%= render partial: "names/widgets/delete_dependents_summary", locals: { name: @name } %>
 
 <div class="error-message-container"></div>
 <div id="search-result-details-info-message-container" class="message-container"></div>

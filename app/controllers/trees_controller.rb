@@ -103,7 +103,9 @@ class TreesController < ApplicationController
                                                    excluded: move_name_params[:excluded],
                                                    profile: profile.profile_data)
     response = replacement.replace
+    response_ostruct = json(response)
     @html_out = process_problems(replacement_json_result(response))
+    raise response_ostruct.error || 'Unknown error' unless response_ostruct&.ok
     render "moved_placement"
   rescue RestClient::Unauthorized, RestClient::Forbidden => e
     @message = json_error(e)
@@ -113,6 +115,9 @@ class TreesController < ApplicationController
     render "move_placement_error", status: :forbidden
   rescue RestClient::ExceptionWithResponse => e
     @message = json_error(e)
+    render "move_placement_error"
+  rescue => e
+    @message = e.to_s
     render "move_placement_error"
   end
 
@@ -277,7 +282,7 @@ class TreesController < ApplicationController
     render "trees/reports/run_cas_error", status: :forbidden
   rescue => e
     @message = e.to_s
-    render "trees/reports/run_cas_error", status: :bad_request 
+    render "trees/reports/run_cas_error", status: :bad_request
   end
 
   def show_diff
@@ -304,7 +309,7 @@ class TreesController < ApplicationController
     render "trees/reports/run_diff_error", status: :forbidden
   rescue => e
     @message = e.to_s
-    render "trees/reports/run_diff_error", status: :bad_request 
+    render "trees/reports/run_diff_error", status: :bad_request
   end
 
   def show_valrep
@@ -327,7 +332,7 @@ class TreesController < ApplicationController
     render "trees/reports/run_valrep_error", status: :forbidden
   rescue => e
     @message = e.to_s
-    render "trees/reports/run_valrep_error", status: :bad_request 
+    render "trees/reports/run_valrep_error", status: :bad_request
   end
 
   private

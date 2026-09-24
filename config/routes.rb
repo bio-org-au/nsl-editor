@@ -50,10 +50,10 @@ Rails.application.routes.draw do
   match "profile_item_references/:profile_item_id/:reference_id", as: "save_profile_item_references", to: "profile_item_references#update", via: :put
   match "profile_item_references/:profile_item_id/:reference_id", as: "delete_profile_item_references", to: "profile_item_references#destroy", via: :delete
 
-  resources :de_duplicates
+  resources :de_duplicates, controller: "names/de_duplicates"
   match "de-duplicate",
         as: "de_duplicates_index",
-        to: "de_duplicates#index",
+        to: "names/de_duplicates#index",
         via: :get
 
   match "/feedback", as: "feedback", to: "feedback#index", via: :get
@@ -125,6 +125,7 @@ Rails.application.routes.draw do
   match "instances/:id/standalone/copy_for_profile_v2",
         as: "copy_for_profile_v2", to: "instances#copy_for_profile_v2", via: :post
   resources :instances, only: %i[new create update destroy] do
+    resources :soft_deletes, only: [:create], controller: "instances/soft_deletes"
     resource :name, only: [:update], controller: "instances/change_name" do
       get :typeahead
     end
@@ -205,6 +206,7 @@ Rails.application.routes.draw do
 
   resources :names, only: %i[create update destroy] do
       resources :name_resources, only: [:create, :update, :destroy], controller: 'names/name_resources'
+      resources :soft_deletes, only: [:create], controller: "names/soft_deletes"
   end
 
   match "names/:id",
@@ -224,7 +226,7 @@ Rails.application.routes.draw do
 
   match "names/duplicate/transfer/all/dependents/:dependent_type/to/master",
         as: "name_transfer_all_dependents",
-        to: "names#transfer_all_dependents",
+        to: "names/de_duplicates#transfer_all_dependents",
         via: :post
 
   match "authors/typeahead_on_abbrev",

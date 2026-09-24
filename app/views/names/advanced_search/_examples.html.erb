@@ -11,7 +11,7 @@
       {search_target: 'Names', search_string: "acacia",explanation: %Q(List names starting with "acacia".  Bare search is on names. 100 records is the default.)},
       {search_target: 'Names', search_string: "acacia limit: 1 offset: 99",explanation: %Q(List the 100th name starting with "acacia".)},
       {search_target: 'Names', search_string: "acacia limit: 100 offset: 200",explanation: %Q(List the 201st - 300th names starting with "acacia".)},
-      {search_target: 'Names', search_string: "acacia type:*", 
+      {search_target: 'Names', search_string: "acacia type:*",
        explanation: %Q(Also include common and cultivar names which are normally excluded (i.e. #{excc.sub(/\./,'')}).)},
       {search_target: 'Names', search_string: "*cacia", explanation: %Q(Find names containing "cacia". A trailing wildcard is added automatically. #{excc})},
       {search_target: 'Names', search_string: "acacia type:common,cultivar", explanation: %Q(Find just common or cultivar names exactly matching "acacia". #{incc})},
@@ -100,6 +100,8 @@
   <% [
       {search_target: 'Names', search_string: "is-a-parent: has-no-instances:",explanation: %Q(List names that have children but no instances.)},
       {search_target: 'Names', search_string: "has-a-second-parent:",explanation: %Q(List names that have a second parent.)},
+      {search_target: 'Names', search_string: "is-soft-deleted:",explanation: %Q(List names that are soft deleted.)},
+      {search_target: 'Names', search_string: "is-not-soft-deleted:",explanation: %Q(List names that are not soft deleted.)},
       {search_target: 'Names', search_string: "Grevillea has-a-second-parent:",explanation: %Q(List Grevilleas that have a second parent.)},
       {search_target: 'Names', search_string: "acacia is-orth-var-with-no-orth-var-instances:",explanation: %Q(List orth. var. acacias with no orth. var. instance.)},
       {search_target: 'Names', search_string: "*acacia is-orth-var-with-no-orth-var-instances:",explanation: %Q(List orth. var. names containing "acacia" with no orth. var. instance.)},
@@ -121,14 +123,16 @@
 
 <br>
 <h5 class="inline-block">Count names</h5><span> - turn a list into a count</span>
-<p>Note: you can also use a <code>count:</code> directive.
+<p>Note: the older form, starting a search with the bare word
+<q>count</q>, still works but is deprecated - please use the
+<code>count:</code> directive instead.
 <table class="example-searches table table-striped">
-  <% [{search_target: 'Names', search_string: "count acacia",explanation: %Q(Count names starting with "acacia". #{excc})},
-      {search_target: 'Names', search_string: "count rank: genus is-not-a-duplicate:", explanation: %Q(Count non-duplicate genera. #{excc})},
-      {search_target: 'Names', search_string: "count acacia type:*", explanation: %Q(Count names starting with "acacia". #{incc})},
-      {search_target: 'Names', search_string: "count acacia type:common,cultivar", explanation: %Q(Count common or cultivar names starting with "acacia". #{incc})},
-      {search_target: 'Names', search_string: "count is-a-duplicate:", explanation: %Q(Count duplicate names. #{excc})},
-      {search_target: 'Names', search_string: "count comments:*", explanation: %Q(Count commented names turning a text field into an assertion. #{excc})}
+  <% [{search_target: 'Names', search_string: "count: acacia",explanation: %Q(Count names starting with "acacia". #{excc})},
+      {search_target: 'Names', search_string: "count: rank: genus is-not-a-duplicate:", explanation: %Q(Count non-duplicate genera. #{excc})},
+      {search_target: 'Names', search_string: "count: acacia type:*", explanation: %Q(Count names starting with "acacia". #{incc})},
+      {search_target: 'Names', search_string: "count: acacia type:common,cultivar", explanation: %Q(Count common or cultivar names starting with "acacia". #{incc})},
+      {search_target: 'Names', search_string: "count: is-a-duplicate:", explanation: %Q(Count duplicate names. #{excc})},
+      {search_target: 'Names', search_string: "count: comments:*", explanation: %Q(Count commented names turning a text field into an assertion. #{excc})}
       ].each do |val| %>
   <tr>
     <td class="width-30-percent">
@@ -146,7 +150,7 @@
       {search_target: 'Names', search_string: "acacia limit:50", explanation: %Q(List 50 names starting with "acacia". #{excc})},
       {search_target: 'Names', search_string: "acacia limit:1000", explanation: %Q(List 1000 names starting with "acacia". #{excc}.)},
       {search_target: 'Names', search_string: "acacia limit:10000", explanation: %Q(List 10000 names starting with "acacia". #{excc}. <span class="red">10000 is the current maximum.</span>)},
-      {search_target: 'Names', search_string: "count acacia limit:10 nt:*", explanation: %Q(Count over-rides limit. #{incc}.)}
+      {search_target: 'Names', search_string: "count: acacia limit:10 nt:*", explanation: %Q(Count over-rides limit. #{incc}.)}
       ].each do |val| %>
   <tr>
     <td class="width-30-percent">
@@ -263,6 +267,55 @@
       {search_target: 'Names',
        search_string: "has-no-primary-instance: status: legitimate name: apium",
        explanation: %Q(Legitimate names matching apium with no primary instance.)},
+     ].each do |val| %>
+  <tr>
+    <td class="width-30-percent">
+      <%= link_to(val[:search_string],
+                  search_path(query_string: val[:search_string],
+                  query_target: val[:search_target]),
+                  class:'blue',
+                  title: "Run the described search.")
+      %>
+    </td>
+    <td><%= val[:explanation].html_safe %></td>
+  </tr>
+  <% end %>
+</table>
+<br>
+
+<h5 class="">API change searches</h5>
+<table class="example-searches table table-striped">
+  <% [
+      {search_target: 'Names',
+       search_string: "has-api-name:",
+       explanation: %Q(Names that have been changed by an API.)},
+      {search_target: 'Names',
+       search_string: "has-no-api-name:",
+       explanation: %Q(Names that have never been changed by an API.)},
+      {search_target: 'Names',
+       search_string: "api-name: jira-sync",
+       explanation: %Q(Names last changed by an API whose name contains "jira-sync". Case-insensitive, with wildcards added at both ends.)},
+      {search_target: 'Names',
+       search_string: "api-at: 27-07-2026",
+       explanation: %Q(Names changed by an API on 27 July 2026.)},
+      {search_target: 'Names',
+       search_string: "api-at: 07-2026",
+       explanation: %Q(Names changed by an API in July 2026 - the date is matched with wildcards at both ends.)},
+      {search_target: 'Names',
+       search_string: "api-at: 2026",
+       explanation: %Q(Names changed by an API in 2026.)},
+      {search_target: 'Names',
+       search_string: "api-at-after: 26-07-2026",
+       explanation: %Q(Names changed by an API after 26 July 2026, excluding the 26th itself.)},
+      {search_target: 'Names',
+       search_string: "api-at-before: 28-07-2026",
+       explanation: %Q(Names changed by an API before 28 July 2026, excluding the 28th itself.)},
+      {search_target: 'Names',
+       search_string: "api-at-after: 26-07-2026 api-at-before: 28-07-2026",
+       explanation: %Q(Names changed by an API within a date range - here, 27 July 2026 only.)},
+      {search_target: 'Names',
+       search_string: "api-name: jira-sync api-at-after: 30-06-2026",
+       explanation: %Q(Names changed by the "jira-sync" API after 30 June 2026.)},
      ].each do |val| %>
   <tr>
     <td class="width-30-percent">

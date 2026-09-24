@@ -4,14 +4,14 @@ $('#update-name-placement-btn').find('i.fa').removeClass('fa-spin');
 <% if @message %>
 $('#movement-message-container')
     .removeClass('hidden')
-    .html(markdown("<%= escape_javascript(@message.html_safe) %>"))
+    .html(markdown("<%= escape_javascript(sanitize(@message)) %>"))
     .append('<button onclick="refreshTreeTab(event);">refresh</button>');
 <% end %>
 
 <% if @html_out %>
 $('#movement-message-container')
     .removeClass('hidden')
-    .append(markdown("<%= escape_javascript(@html_out.html_safe) %>"))
+    .append(markdown("<%= escape_javascript(sanitize(@html_out)) %>"))
     .append('<button onclick="refreshTreeTab(event);">refresh</button>');
 <% else %>
 $('#instance-classification-tab').click();

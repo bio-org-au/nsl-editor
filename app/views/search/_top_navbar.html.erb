@@ -67,6 +67,7 @@
                     search_reports_path,
                     class: "main-body-tab-link",
                     remote: true,
+                    data: { turbo: false },
                     title: "List of query reports" %>
       </li>
       <li id="taxonomy-report-tab" role="presentation" class="<%= 'hidden' unless @working_draft %>">
@@ -74,16 +75,18 @@
                       trees_reports_path,
                       class: "main-body-tab-link",
                       remote: true,
+                      data: { turbo: false },
                       title: "Draft taxonomy reports" %>
       </li>
 
-      <% if can?("de_duplicates", :index) %>
+      <% if can?("names/de_duplicates", :index) %>
         <% if @current_user.qa? || @current_user.product_from_context&.is_name_index? %>
           <li role="presentation" class="">
             <%= link_to "De-duplicate",
                         de_duplicates_index_path,
                         class: "main-body-tab-link xhidden",
                         remote: true,
+                        data: { turbo: false },
                         title: "De-duplicate names in bulk" %>
           </li>
         <% end %>
@@ -97,6 +100,7 @@
                       id: "batch-loader-console-tab-link",
                       class: "main-body-tab-link",
                       remote: true,
+                      data: { turbo: false },
                       title: "Batch Loader work area" %>
         </li>
       <% end %>

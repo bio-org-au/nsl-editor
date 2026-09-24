@@ -3,7 +3,7 @@
     accepted concept.
   </div>
 <% end %>
-<%= form_for(@instance, remote: true) do |f| %>
+<%= form_for(@instance, remote: true, data: { turbo: false }) do |f| %>
     <% if @instance.errors.any? %>
         <div id="error_explanation">
             <h2><%= pluralize(@instance.errors.count, "error") %> prohibited this instance from being saved:</h2>
@@ -37,10 +37,6 @@
     on page
     <br>
     <%= f.text_field :page, title: 'Enter page details', tabindex: increment_tab_index %>
-    <br>
-    with BHL URL
-    <br>
-    <%= f.text_field :bhl_url, class: "form-control", title: 'Enter BHL URL', tabindex: increment_tab_index %>
     <br>
     <%= hidden_field :instance, :id, value: @instance.id, name: 'for-bloodhound-js-use-only' %>
     <%= f.hidden_field :name_id, value: @instance.name_id %>

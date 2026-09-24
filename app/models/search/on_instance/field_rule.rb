@@ -57,8 +57,8 @@ from comment where comment.instance_id = instance.id)",
     "page:" => { where_clause: " lower(page) like lower(?)" },
     "page-qualifier:" => { where_clause:
                                  " lower(page_qualifier) like lower(?)" },
-    
-    "show-profiles:" => { where_clause: " exists (select null 
+
+    "show-profiles:" => { where_clause: " exists (select null
                                  from profile_item
                                  join profile_text as pt on pt.id = profile_item.profile_text_id
                                  where profile_item.instance_id = instance.id
@@ -102,6 +102,15 @@ from comment where comment.instance_id = instance.id)",
                                  and lower(instance_note_key.name) = 'type')) ",
                                leading_wildcard: true,
                                trailing_wildcard: true },
+    "api-name:" => { where_clause: " lower(api_name) like ? ",
+                     trailing_wildcard: true,
+                     leading_wildcard: true },
+    "api-at:" => { where_clause: " to_char(api_at at time zone 'Australia/Melbourne', 'dd-mm-yyyy') like ? ",
+                   trailing_wildcard: true,
+                   leading_wildcard: true },
+    "api-at-after:" => { where_clause: " (api_at at time zone 'Australia/Melbourne') >= to_date(?, 'dd-mm-yyyy')
+                                  + interval '1 day' " },
+    "api-at-before:" => { where_clause: " (api_at at time zone 'Australia/Melbourne') < to_date(?, 'dd-mm-yyyy') " },
     "apc-dist-note-matches:" => { where_clause: " exists (select null
                                  from instance_note
                                  where instance_id = instance.id
@@ -202,6 +211,12 @@ from comment where comment.instance_id = instance.id)",
                                       takes_no_arg: true},
     "is-not-cited-by-an-instance:" => { where_clause: " cited_by_id is null",
                                         takes_no_arg: true},
+    "is-soft-deleted:" => { where_clause: " deleted_at is not null",
+                            takes_no_arg: true},
+    "is-not-soft-deleted:" => { where_clause: " deleted_at is null",
+                                takes_no_arg: true},
+    "has-api-name:" => { where_clause: " api_name is not null", takes_no_arg: true },
+    "has-no-api-name:" => { where_clause: " api_name is null", takes_no_arg: true },
     "verbatim-name-exact:" => { where_clause:
                                  "lower(verbatim_name_string) like lower(?) " },
     "verbatim-name:" => { where_clause:
@@ -249,7 +264,7 @@ from comment where comment.instance_id = instance.id)",
                                                              'orth. var.'))" ,
                        takes_no_arg: true},
     "species-or-below-syn-with-genus-or-above:" =>
-    { where_clause: 
+    { where_clause:
       " instance.id in
       (
      SELECT i.id
@@ -345,13 +360,13 @@ from instance i
     "name-status-not:" => { where_clause: %[ id in (select i.id from instance i join name n on i.name_id = n.id join name_status ns on n.name_status_id = ns.id and lower(ns.name) not like lower(?))] },
     "syn-conflicts-with-loader-batch:" => { where_clause: " id in (
    select instance.id
-  from loader_name ln 
+  from loader_name ln
        join loader_name_match lnm
        on ln.id = lnm.loader_name_id
        join instance
-       on lnm.name_id = instance.name_id 
-       join tree_join_v tjv 
-       on instance.id = tjv.instance_id 
+       on lnm.name_id = instance.name_id
+       join tree_join_v tjv
+       on instance.id = tjv.instance_id
        join loader_batch lb
        on ln.loader_batch_id = lb.id
        join name

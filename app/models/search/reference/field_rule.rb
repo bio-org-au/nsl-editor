@@ -19,6 +19,17 @@
 # Field rules available for building predicates.
 class Search::Reference::FieldRule
   RULES = {
+    "api-name:" => { where_clause: " lower(api_name) like ? ",
+                     trailing_wildcard: true,
+                     leading_wildcard: true },
+    "api-at:" => { where_clause: " to_char(api_at at time zone 'Australia/Melbourne', 'dd-mm-yyyy') like ? ",
+                   trailing_wildcard: true,
+                   leading_wildcard: true },
+    "api-at-after:" => { where_clause: " (api_at at time zone 'Australia/Melbourne') >= to_date(?, 'dd-mm-yyyy')
+                                  + interval '1 day' " },
+    "api-at-before:" => { where_clause: " (api_at at time zone 'Australia/Melbourne') < to_date(?, 'dd-mm-yyyy') " },
+    "has-api-name:" => { where_clause: " api_name is not null", takes_no_arg: true },
+    "has-no-api-name:" => { where_clause: " api_name is null", takes_no_arg: true},
     "is-a-duplicate:" => { where_clause: " duplicate_of_id is not null",
                            takes_no_arg: true},
     "is-not-a-duplicate:" => { where_clause: " duplicate_of_id is null",
@@ -94,6 +105,8 @@ from ref_type where lower(name) like lower(?))" },
     "bhl:" => { where_clause:
                                  " lower(bhl_url) like lower(?)" },
     "doi:" => { where_clause: " lower(doi) like lower(?)" },
+    "no-doi:" => { where_clause: " doi is null",
+                   takes_no_arg: true},
     "tl2:" => { where_clause: " lower(tl2) like lower(?)" },
 
     "id:" => { multiple_values: true,
@@ -199,15 +212,16 @@ inner join ref_type xcrt on xrt.id = xcrt.parent_id))",
     "not-language:" => { multiple_values: true,
                          where_clause: " language_id != (select id from language where lower(name) = lower(?) ) ",
                          multiple_values_where_clause: " language_id not in (select id from language where lower(name) in (?))" },
-    "no-publication-date:" => { where_clause: " publication_date is null " },
+    "no-publication-date:" => { takes_no_arg: true,
+                                where_clause: " publication_date is null " },
     "source-system:" => {where_clause: "lower(source_system) like ?"},
     "source-id:" => {multiple_values: true,
                      where_clause: " source_id = ? ",
                      multiple_values_where_clause: " source_id in (?)" },
     "source-id-string:" => {where_clause: "lower(source_id_string) like ?||'%'"},
     "is-a-duplicate-and-master:" => { where_clause: " id in (select id
-                                                               from reference ref_dupe_master 
-                                                              where id in (select duplicate_of_id 
+                                                               from reference ref_dupe_master
+                                                              where id in (select duplicate_of_id
                                                                              from reference ref_dupes
                                                                             where duplicate_of_id is not null)
                                                               and duplicate_of_id is not null)",
@@ -223,5 +237,12 @@ inner join ref_type xcrt on xrt.id = xcrt.parent_id))",
     on parent.ref_type_id = prt.id
  where rt.name  = 'Unknown'
    and prt.name = 'Journal')"},
+    "display-title:" => { trailing_wildcard: true,
+                          leading_wildcard: true,
+                          where_clause:
+                                 " lower(display_title) like lower(?)" },
+    "title-does-not-match-display-title:" => {
+                          takes_no_arg: true,
+                          where_clause: " display_title != title " },
   }.freeze
 end
