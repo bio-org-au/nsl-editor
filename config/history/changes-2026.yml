@@ -1,8 +1,4 @@
 - :date: 07-October-2026
-  :jira_id: '5972'
-  :description: |-
-    Loader Batch: Fix bug in Batch Loader bulk vote check that the record is for a family
-- :date: 07-October-2026
   :jira_id: '5971'
   :description: |-
     Loader Batch: Fix bug in the detailed logic for moving loader names to a different batch
