@@ -82,7 +82,7 @@ class Loader::Name::Review::Vote < ApplicationRecord
   def self.in_bulk(params, username)
     loader_name = Loader::Name.find(params[:loader_name_id])
     batch_review = Loader::Batch::Review.find(params[:batch_review_id])
-    throw("No bulk vote for this type of record") unless loader_name.record_type = loader_name.family?
+    throw("Bulk voting is only available from a family heading") unless loader_name.family_heading?
     created = 0
     Loader::Name.where(family: loader_name.family)
       .where(loader_batch_id: batch_review.loader_batch.id)

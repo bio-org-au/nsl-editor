@@ -272,6 +272,11 @@ class Loader::Name < ApplicationRecord
     record_type == "heading"
   end
 
+  # Bulk review voting is only offered from a heading of rank family.
+  def family_heading?
+    heading? && rank.to_s.downcase == "family"
+  end
+
   def excluded?
     record_type == "excluded"
   end
