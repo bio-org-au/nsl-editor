@@ -25,11 +25,20 @@ require_relative "review_vote_test_setup"
 class ReviewVotesInBulkAuthorisationTest < ActionDispatch::IntegrationTest
   include ReviewVoteTestSetup
 
-  setup { setup_review_votes }
+  # Bulk voting is only available from a family heading (findings #8c), so
+  # these tests bulk-vote from one: an Apiaceae family heading in batch_one,
+  # whose family includes the accepted record accepted_one.
+  setup do
+    setup_review_votes
+    @family_heading = loader_names(:misapp_no_parent)
+    @family_heading.update_columns(record_type: "heading", rank: "family",
+                                   simple_name: "Apiaceae", full_name: "Apiaceae",
+                                   family: "Apiaceae", parent_id: nil)
+  end
 
   test "reviewer cannot bulk-vote on behalf of an org they do not represent" do
     as_user(@reviewer_user) do
-      post create_name_review_vote_in_bulk_path, params: vote_params(org: @org_b),
+      post create_name_review_vote_in_bulk_path, params: vote_params(org: @org_b, loader_name: @family_heading),
         headers: { "Accept" => "application/javascript" }, xhr: true
     end
     assert_rejected
@@ -38,7 +47,7 @@ class ReviewVotesInBulkAuthorisationTest < ActionDispatch::IntegrationTest
 
   test "user not registered as a reviewer cannot bulk-vote" do
     as_user(users(:user_two)) do
-      post create_name_review_vote_in_bulk_path, params: vote_params(org: @org_a),
+      post create_name_review_vote_in_bulk_path, params: vote_params(org: @org_a, loader_name: @family_heading),
         headers: { "Accept" => "application/javascript" }, xhr: true
     end
     assert_rejected
@@ -48,7 +57,7 @@ class ReviewVotesInBulkAuthorisationTest < ActionDispatch::IntegrationTest
   # Control: the legitimate path must keep working after the fix.
   test "reviewer can bulk-vote for the org they represent" do
     as_user(@reviewer_user) do
-      post create_name_review_vote_in_bulk_path, params: vote_params(org: @org_a),
+      post create_name_review_vote_in_bulk_path, params: vote_params(org: @org_a, loader_name: @family_heading),
         headers: { "Accept" => "application/javascript" }, xhr: true
     end
     assert_response :success
