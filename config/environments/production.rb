@@ -35,8 +35,9 @@ Rails.application.configure do
   config.active_storage.service = :local
 
   # Assume all access to the app is happening through a SSL-terminating reverse proxy.
-  # Can be used together with config.force_ssl for Strict-Transport-Security and secure cookies.
-  # config.assume_ssl = true
+  # AWS ALB terminates TLS, so we don't need force_ssl (HTTP->HTTPS redirect),
+  # but we DO need assume_ssl so session cookies get the Secure flag.
+  config.assume_ssl = true
 
   # Force all access to the app over SSL, use Strict-Transport-Security, and use secure cookies.
   # config.force_ssl = true
