@@ -1,4 +1,8 @@
 - :date: 08-October-2026
+  :jira_id: '5974'
+  :description: |-
+    Security: Sanitize Batch Loader Review Comment HTML
+- :date: 08-October-2026
   :jira_id: '5973'
   :description: |-
     Security: Add a suggested SSL config setting
