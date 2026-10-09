@@ -111,11 +111,6 @@ class Loader::Name::Match < ApplicationRecord
     use_existing_instance == true
   end
 
-  def standalone?
-    throw("standalone? what does this mean?")
-    standalone_instance_id.present? && !copy_append_from_existing_use_batch_def_ref
-  end
-
   def standalone_instance?
     standalone_instance_id.present?
   end

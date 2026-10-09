@@ -211,17 +211,23 @@ A security review was conducted with findings in `tmp/review/findings.md`. Key i
 - No `permit!` or `to_unsafe_h` anywhere
 
 ### Open items to address
-- **XSS via Markdown** (finding 2): Use `sanitize(Kramdown::Document.new(text).to_html)` not `.html_safe`
-- **Other `.html_safe` uses** (finding 3): Wrap stored data in `sanitize(...)` rather than `.html_safe`
-- **Transport hardening** (finding 4): Enable `force_ssl`/`assume_ssl`, add CSP
-- **JSON.load** (finding 10): Use `JSON.parse` instead (5 places in `name/namable.rb`, `reference/citations.rb`, `name/as_services.rb`)
+- **Other `.html_safe` uses** (finding 3): wrap stored data in `sanitize(...)` rather than `.html_safe`. The review comment is done (NSL-5974); the loader partials and tree name HTML remain
+- **Transport hardening** (finding 4): `assume_ssl` is on (NSL-5973). A CSP (start in report-only mode) and `config.hosts` remain
+- **Session handling** (finding 5): re-enable `reset_session` on sign-in, and add `rate_limit` to sign-in
+- **Outbound service calls** (finding 6): explicit RestClient timeouts; API key in a header rather than the query string
+- **CI doesn't run RuboCop**: `lint-ruby.yml` runs only Brakeman, so the cops below are enforced only by the pre-commit hook. Adding a `bin/rubocop` step is pending a team decision
+
+### Patterns to follow (from fixed findings)
+- **Markdown** (finding 2, NSL-5964): `markdown_to_html` sanitizes. Never `.html_safe` Kramdown output
+- **JSON from services** (finding 10, NSL-5978): use `JSON.parse`, never `JSON.load`
 
 ### Common bugs to avoid
 - **Assignment in condition**: `=` instead of `==` (finding 8). Three bugs were fixed where `if x = y` was meant to be `if x == y`
-- **Duplicate method definitions**: Watch for methods defined twice (second silently wins)
+- **Duplicate method definitions**: watch for methods defined twice (the second silently wins), including an `attr_*` plus a `def` of the same name
+- **Unreachable code**: code after an unconditional `return`/`raise`, or after `throw` tripwires
 
-### RuboCop cops to enable
-Add these to `.rubocop.yml` for CI to catch regressions:
+### RuboCop lint cops (enabled in NSL-5978)
+`.rubocop.yml` enables these on top of Omakase, and the repo has zero offences. Keep it that way:
 - `Lint/AssignmentInCondition`
 - `Lint/DuplicateMethods`
 - `Lint/UnreachableCode`

@@ -327,7 +327,7 @@ class Loader::Name < ApplicationRecord
 
       return InstanceType.find_by_name("pro parte taxonomic synonym").id if pp?
 
-      return InstanceType.find_by_name("taxonomic synonym").id
+      InstanceType.find_by_name("taxonomic synonym").id
 
     elsif nomenclatural?
       return InstanceType.find_by_name("doubtful pro parte nomenclatural synonym").id if riti_doubtful? && pp?
@@ -336,16 +336,15 @@ class Loader::Name < ApplicationRecord
 
       return InstanceType.find_by_name("pro parte nomenclatural synonym").id if pp?
 
-      return InstanceType.find_by_name("nomenclatural synonym").id
+      InstanceType.find_by_name("nomenclatural synonym").id
 
     elsif InstanceType.where(name: synonym_type).size == 1
-      return InstanceType.find_by_name(synonym_type).id
+      InstanceType.find_by_name(synonym_type).id
     elsif synonym_type.blank?
       raise "The loader-name is a synonym with no synonym type - please set a synonym type in 'Edit Raw' then try again."
     else
       raise "That synonym type is not recognised -- try another one if possible."
     end
-    raise "LoaderName#riti cannot work out the relationship instance type id for loader-name: #{id}: #{simple_name}"
   end
 
   def taxonomic?
