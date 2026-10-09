@@ -1,6 +1,6 @@
 ---
 name: git-branch-workflow-set-up
-description: Make a change the way this repo expects - local branch, commit, push to your fork (origin), then a PR to the upstream repo. Use when starting or shipping a change, or when the user asks to branch, commit, push, or raise a PR.
+description: Make a change the way this repo expects - create a local branch and commit, then hand back to the developer, who reviews, pushes to their fork (origin), and raises the PR to upstream. Use when starting or shipping a change, or when the user asks to branch or commit.
 argument-hint: "[jira-id or branch-name]"
 ---
 
@@ -25,22 +25,18 @@ This repo is a fork. Changes go to `upstream` (`bio-org-au/nsl-editor`) through 
   - Without one: a short imperative summary, for example `Add CLAUDE.md for Claude Code guidance`.
 - The pre-commit hook runs RuboCop on staged Ruby files and blocks Bootstrap 3/4 classes. If it fails, fix the problem. Don't bypass it with `--no-verify` unless the user asks.
 
-## 3. Push to origin (your fork)
+## 3. Stop and hand back to the developer
 
-```bash
-git push -u origin <branch-name>
-```
+**Don't push, and don't create the PR.** The developer reviews the commit first, then does both steps themselves. Creating a PR on GitHub means filling in `.github/PULL_REQUEST_TEMPLATE.md`, and the developer answers those questions.
 
-## 4. Create the PR to upstream
+Hand back with:
+- the branch name and the commit (`git log --oneline -1 --stat`)
+- the commands for the remaining steps, ready to copy:
+  ```bash
+  git push -u origin <branch-name>
+  ```
+  then create the PR on GitHub to `bio-org-au/nsl-editor` `main`, filling in the PR template.
 
-Work out the fork owner from `git remote get-url origin`. Then run:
+Push only if the developer explicitly asks you to in this conversation. Even then, leave the PR to them unless they say otherwise.
 
-```bash
-gh pr create --repo bio-org-au/nsl-editor --base main \
-  --head <fork-owner>:<branch-name> \
-  --title "<commit subject>" --body "<summary of the change>"
-```
-
-- Keep the body short: what changed and why, plus anything a reviewer should check.
-- Give the user the PR URL.
-- After the PR is merged, run `/post-merge-clean-up`.
+After the PR is merged, run `/post-merge-clean-up`.
