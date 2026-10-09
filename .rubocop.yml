@@ -85,6 +85,26 @@ Style/UnlessLogicalOperators:
   Enabled: true
   EnforcedStyle: forbid_logical_operators
 
+# Enabled after the Oct 2026 security review (tmp/review/findings.md, findings
+# 8-10) so CI catches these bug classes if they come back.
+Lint/AssignmentInCondition:
+  Enabled: true
+
+Lint/DuplicateMethods:
+  Enabled: true
+
+Lint/UnreachableCode:
+  Enabled: true
+
+Lint/InterpolationCheck:
+  Enabled: true
+
+Lint/UselessAssignment:
+  Enabled: true
+
+Security/JSONLoad:
+  Enabled: true
+
 
 # Gives warning: || Warning: unrecognized cop Rails found in /Users/gregc/Dropbox/anbg/rails/ned/.rubocop.yml
 # Rails:

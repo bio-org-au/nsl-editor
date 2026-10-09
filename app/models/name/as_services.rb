@@ -151,7 +151,7 @@ class Name::AsServices < Name
   def delete_with_reason(reason)
     url = Name::AsServices.delete_url(id, reason)
     s_response = RestClient.delete(url, accept: :json)
-    json = JSON.load(s_response)
+    json = JSON.parse(s_response)
     if s_response.code == 200 && json["ok"] == true
       true
     else

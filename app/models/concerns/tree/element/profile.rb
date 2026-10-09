@@ -33,9 +33,7 @@ module Tree::Element::Profile
   def update_comment(comment_param, username)
     return apply_blank_comment(username) if comment_param.blank?
 
-    return apply_non_blank_comment(comment_param, username)
-
-    [ message, refresh || false ]
+    apply_non_blank_comment(comment_param, username)
   end
 
   def apply_blank_comment(username)
