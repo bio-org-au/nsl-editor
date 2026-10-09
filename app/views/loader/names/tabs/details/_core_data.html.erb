@@ -55,15 +55,15 @@
 <%= render partial: 'detail_line', locals: {info: @loader_name.year, label: 'year'} unless @loader_name.year.blank? %>
 <%= render partial: 'detail_line', locals: {info: @loader_name.date_, label: 'date_'} unless @loader_name.date_.blank? %>
 <% if @loader_name.misapp? && @loader_name.original_text.present? %>
-  <%= render partial: 'detail_line', locals: {info: @loader_name.original_text.gsub(/&amp;/,'zzzzzzz').gsub(/;/,';<br>').gsub(/zzzzzzz/,'&amp;').html_safe, label: 'Misapp HTML'} %>
+  <%= render partial: 'detail_line', locals: {info: sanitize(@loader_name.original_text.gsub(/&amp;/,'zzzzzzz').gsub(/;/,';<br>').gsub(/zzzzzzz/,'&amp;')), label: 'Misapp HTML'} %>
   <%  (1..@loader_name.original_text.length.div(110)).each do |i|  %>
     <br>
   <% end %>
 <% end %>
 <%= render partial: 'detail_line',
-  locals: {info: "<span class='bgyellow remark loader-name remark-to-reviewers'>#{@loader_name.remark_to_reviewers}</span>".html_safe,
+  locals: {info: "<span class='bgyellow remark loader-name remark-to-reviewers'>#{sanitize(@loader_name.remark_to_reviewers)}</span>".html_safe,
            label: 'remark to reviewers'} unless @loader_name.remark_to_reviewers.blank? || @loader_name.misapp? %>
-<%= render partial: 'detail_line', locals: {info: @loader_name.higher_rank_comment, label: 'higher rank comment'} unless @loader_name.higher_rank_comment.blank? %>
+<%= render partial: 'detail_line', locals: {info: sanitize(@loader_name.higher_rank_comment), label: 'higher rank comment'} unless @loader_name.higher_rank_comment.blank? %>
 <%= "<br><br>#{ divider }<br><br><br><br>".html_safe unless @loader_name.higher_rank_comment.blank? %>
 
 <% unless @loader_name.formatted_text_above.blank? %>

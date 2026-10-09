@@ -1,4 +1,8 @@
 - :date: 09-October-2026
+  :jira_id: '5979'
+  :description: |-
+    Batch Loader: Low priority security cleanup
+- :date: 09-October-2026
   :jira_id: '5978'
   :description: |-
     Code Tidy: Use safer JSON parsing, remove unreachable code, and enable lint checks for these bug classes
