@@ -13,6 +13,14 @@ while read local_ref local_sha remote_ref remote_sha; do
     echo "Processing push to $remote_ref..."
     # Check if pushing to the main branch on the upstream remote
     if [ "$remote_ref" = "refs/heads/main" ] || [ "$remote_ref" = "refs/heads/master" ]; then
+        # No need to confirm when every commit pushed is already in upstream's
+        # main, e.g. syncing the fork after a PR merge. Falls through to the
+        # prompt if there's no upstream remote, or for a delete (all-zero sha).
+        if git merge-base --is-ancestor "$local_sha" upstream/main 2>/dev/null; then
+            echo "$remote_ref only contains commits already in upstream/main; pushing without confirmation."
+            continue
+        fi
+
         echo "You are about to push to the main branch on $remote."
 
         # Prompt for confirmation

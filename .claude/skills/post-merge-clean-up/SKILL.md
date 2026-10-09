@@ -42,6 +42,6 @@ Bring `main` up to date with the upstream repo after a PR merge, push it to the 
    ```
    If the merge couldn't be confirmed, ask first.
 
-6. **Push main to the fork.** If the git hooks are on (`git config core.hooksPath` is `.githooks`), the pre-push hook asks "Are you sure?" on the terminal before any push to `main`. Claude's shell has no terminal, so the hook cancels the push. In that case, don't try it and don't bypass it with `--no-verify`. Ask the developer to run `git push` in a normal terminal window and answer `yes`. Running `! git push` in Claude Code doesn't work either. If the hooks are off, run `git push`.
+6. **Push main to the fork:** `git push`. After step 3, `main` matches `upstream/main`, so the pre-push hook lets it through without asking. If the hook asks "Are you sure?" anyway, `main` has commits that aren't in upstream. The push will fail in Claude's shell, which has no terminal. Stop and tell the developer which commits those are (`git log --oneline upstream/main..main`). Never bypass the hook with `--no-verify`.
 
-7. **Report** the new `main` HEAD (`git log --oneline -1`), which branches were deleted (local and remote), and whether `main` still needs pushing.
+7. **Report** the new `main` HEAD (`git log --oneline -1`), which branches were deleted (local and remote), and that `main` is pushed.
