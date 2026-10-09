@@ -71,6 +71,15 @@ class SessionsController < ApplicationController
     @no_menus = true
   end
 
+  # The user's LDAP groups (edit, admin, treebuilder, etc.) are read once, here,
+  # and kept in the session cookie. ApplicationController#continue_user_session
+  # trusts them on every request without asking LDAP again. So a change to
+  # someone's LDAP groups, including removing access, only takes effect when
+  # they next sign in. The cookie expires after 3 hours *idle*
+  # (config/initializers/session_store.rb: expire_after is renewed on every
+  # request), so an active user keeps their old groups until they sign out.
+  # To cut off access sooner, rotate session_key_tag so every session ends.
+  # Database-backed roles (via User) are not affected: they're read per request.
   def set_up_session
     session[:username] = sign_in_params[:username].downcase
     session[:groups] = @sign_in.groups
