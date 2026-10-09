@@ -28,7 +28,6 @@ class Loader::Batch < ApplicationRecord
   has_many :batch_reviews, class_name: "Loader::Batch::Review", foreign_key: "loader_batch_id"
   alias_method :reviews, :batch_reviews
   belongs_to :default_reference, class_name: "Reference", foreign_key: "default_reference_id", optional: true
-  alias_method :reviews, :batch_reviews
 
   validates :name, uniqueness: { case_sensitive: false }, presence: true
 
