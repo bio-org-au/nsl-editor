@@ -57,11 +57,13 @@ class SessionsController < ApplicationController
 
   private
 
+  # No reset_session on sign-in, deliberately. Sessions use the cookie store
+  # (config/initializers/session_store.rb): the signed-in state lives inside
+  # the encrypted cookie, and signing in issues a new cookie, so a cookie
+  # planted before sign-in stays signed out and session fixation doesn't apply.
+  # A reset here also broke deep links in 2020 (6203bc092). Revisit if the
+  # session store ever moves server-side (database or cache).
   def build_sign_in
-    # Do we need to reset the session? For security?
-    # deep_link = session[:url_after_sign_in]
-    # reset_session
-    # session[:url_after_sign_in] = deep_link
     @sign_in = SignIn.new(sign_in_params)
     @no_searchbar = true
     @no_search_result_details = true
