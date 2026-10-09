@@ -13,7 +13,7 @@ while read local_ref local_sha remote_ref remote_sha; do
     echo "Processing push to $remote_ref..."
     # Check if pushing to the main branch on the upstream remote
     if [ "$remote_ref" = "refs/heads/main" ] || [ "$remote_ref" = "refs/heads/master" ]; then
-        echo "You are about to push to the main branch of $remote_ref."
+        echo "You are about to push to the main branch on $remote."
 
         # Prompt for confirmation
         # Force user input even in a non-interactive shell
