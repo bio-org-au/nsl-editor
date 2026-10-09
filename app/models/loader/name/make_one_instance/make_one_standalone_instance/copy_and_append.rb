@@ -19,7 +19,7 @@
 # Record a preferred matching name for a raw loader name record.
 class Loader::Name::MakeOneInstance::MakeOneStandaloneInstance::CopyAndAppend
   def initialize(loader_name, user, job)
-    debug('initialize: #{loader_name.id}')
+    debug("initialize: #{loader_name.id}")
     @loader_name = loader_name
     @user = user
     @job = job

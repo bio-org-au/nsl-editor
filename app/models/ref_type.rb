@@ -75,12 +75,20 @@ class RefType < ApplicationRecord
     all.order(:name).collect { |r| [ r.name, r.id ] }
   end
 
+  # Options for a reference whose children have the given ref types, with the
+  # expected parent type preferred and the others marked "may be incompatible".
+  #
+  # Limits: only the first ref type in the list is considered, so callers must
+  # pass the list in a definite order (Reference#ref_type_options orders the
+  # children by id). If children have ref types with different parent types,
+  # e.g. a Section (parent Book) and a Paper (parent Journal), the others are
+  # ignored and no conflict is reported. With no children, or a first child
+  # whose type has no parent type, the plain options are returned.
   def self.options_for_parent_of(children_ref_types)
-    children_ref_types.uniq.each do |rt|
-      return options_with_preference(rt.parent.name) if rt.parent_id.present?
+    first = children_ref_types.first
+    return options if first.nil? || first.parent_id.blank?
 
-      return options
-    end
+    options_with_preference(first.parent.name)
   end
 
   def self.options_with_preference(pref)

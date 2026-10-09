@@ -29,16 +29,6 @@ class Loader::Name::Review::Vote::InBulkController < ApplicationController
     render("create_error", status: :unprocessable_content)
   end
 
-  def destroy
-    throw("stop")
-    username = @current_user.username
-    if @vote.update_attribute(:updated_by, username) && @vote.destroy
-      render
-    else
-      render(js: "alert('Could not delete .');")
-    end
-  end
-
   private
 
   def check_create_permission
