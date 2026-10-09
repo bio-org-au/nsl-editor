@@ -656,10 +656,6 @@ class Instance < ApplicationRecord
     errors.add(:cites_id, "cannot be removed once saved")
   end
 
-  def relationship_flag
-    true if cites_id || cited_by_id
-  end
-
   # The four plus one types of instance -
   # based on null/not null state of the two fields:
   # - cited_by_id

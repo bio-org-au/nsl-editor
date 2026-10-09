@@ -193,12 +193,11 @@ class Reference < ApplicationRecord
     count
   end
 
+  # Ref type options for the edit form. A reference with children is steered
+  # towards the parent type of its earliest-created child; see
+  # RefType.options_for_parent_of for the limits of this.
   def ref_type_options
-    if children.size.zero?
-      RefType.options
-    else
-      RefType.options_for_parent_of(children.collect(&:ref_type))
-    end
+    RefType.options_for_parent_of(children.order(:id).collect(&:ref_type))
   end
 
   def part_parent_year

@@ -25,7 +25,6 @@
 class Search::ParsedRequest
   attr_reader :show_instances,
     :show_novelties,
-    :canonical_query_string,
     :common_and_cultivar,
     :count,
     :defined_query,

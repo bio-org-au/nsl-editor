@@ -1,4 +1,8 @@
 - :date: 09-October-2026
+  :jira_id: '5977'
+  :description: |-
+    Reference Edit: Make the suggested reference type consistent for references with children; remove unused code
+- :date: 09-October-2026
   :jira_id: '5976'
   :description: |-
     Tidy up duplicate code - should not affect behaviour
