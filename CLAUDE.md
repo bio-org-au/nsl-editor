@@ -153,6 +153,11 @@ git push
 git branch -d <branch-name>
 ```
 
+**Skills** (in `.claude/skills/`) automate these steps:
+- `/git-branch-workflow-set-up`: branch, commit, push to origin, open a PR to upstream
+- `/change-history-and-version`: add a `config/history/changes-YYYY.yml` entry and bump `config/version.properties` (user-facing changes only)
+- `/post-merge-clean-up`: sync `main` with upstream after a merge and delete the branch
+
 ## Git Hooks
 
 Run `bin/setup` or `git config core.hooksPath .githooks` to enable:
