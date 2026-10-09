@@ -1,3 +1,7 @@
+- :date: 09-October-2026
+  :jira_id: '5975'
+  :description: |-
+    Loader Name Review: Remove redundant code and clean up "fresh" in loader name review comment code
 - :date: 08-October-2026
   :jira_id: '5974'
   :description: |-
