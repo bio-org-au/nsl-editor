@@ -37,7 +37,7 @@ class ApplicationController < ActionController::Base
 
   protected
 
-  attr_reader :current_user, :current_registered_user
+  attr_reader :current_registered_user
 
   def product_tab_service
     @product_tab_service ||= begin

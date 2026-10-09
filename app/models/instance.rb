@@ -89,7 +89,6 @@ class Instance < ApplicationRecord
   self.sequence_name = "nsl_global_seq"
   attr_accessor :expanded_instance_type,
     :display_as,
-    :relationship_flag,
     :give_me_focus,
     :show_primary_instance_type,
     :data_fix_in_process,

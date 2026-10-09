@@ -1,4 +1,8 @@
 - :date: 09-October-2026
+  :jira_id: '5976'
+  :description: |-
+    Tidy up duplicate code - should not affect behaviour
+- :date: 09-October-2026
   :jira_id: '5975'
   :description: |-
     Loader Name Review: Remove redundant code and clean up "fresh" in loader name review comment code
