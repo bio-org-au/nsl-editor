@@ -178,7 +178,7 @@ class NameRank < ApplicationRecord
       .where(" sort_order >= (select sort_order from name_rank where lower(name)
     = 'species')")
       .order(:sort_order)
-      .collect { |rank| [rank.display_name, rank.id] }
+      .collect { |rank| [rank.name, rank.id] }
   end
 
   def self.cultivar_options
@@ -187,21 +187,21 @@ class NameRank < ApplicationRecord
       .where(" sort_order >= (select sort_order from name_rank where lower(name)
     = 'species')")
       .order(:sort_order)
-      .collect { |rank| [rank.display_name, rank.id] }
+      .collect { |rank| [rank.name, rank.id] }
   end
 
   def self.below_family_options
     where("deprecated is false")
       .where(" sort_order > (select sort_order from name_rank where lower(name) = 'familia')")
       .order(:sort_order)
-      .collect { |rank| [rank.display_name, rank.id] }
+      .collect { |rank| [rank.name, rank.id] }
   end
 
   def self.above_family_options
     where("deprecated is false")
       .where(" sort_order <= (select sort_order from name_rank where lower(name) = 'familia')")
       .order(:sort_order)
-      .collect { |rank| [rank.display_name, rank.id] }
+      .collect { |rank| [rank.name, rank.id] }
   end
 
   def self.id_is_unranked?(id)
@@ -309,6 +309,8 @@ class NameRank < ApplicationRecord
 
   # NOTE: greater than means below!
   def below_family?
+    return false if NameRank.family.blank?
+
     sort_order > NameRank.family.sort_order
   end
 

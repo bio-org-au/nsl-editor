@@ -20,6 +20,7 @@
  *= require utilities/width-primitives
  *= require components/controls
  *= require utilities/typeahead
+ *= require utilities/autocomplete
  *= require utilities/colors
  *= require layouts/layout_2015
  *= require components/search-form

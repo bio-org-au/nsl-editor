@@ -31,8 +31,27 @@ module Name::Typeaheads
   end
 
   # Columns such as parent and duplicate_of_id use a typeahead search.
+  #
+  # Two response formats over the one query, matching
+  # AuthorsController#typeahead_on_abbrev:
+  #   json - answered for any caller that doesn't ask for html by extension
+  #          (kept for parity with that action; nothing in this app's own
+  #          views still asks for it).
+  #   html - the fragment of <li role="option"> elements stimulus-autocomplete
+  #          expects, see app/views/shared/_autocomplete_suggestions.html.erb.
+  #          The name form's Duplicate of field asks for this by extension -
+  #          see AuthorsController#typeahead_on_abbrev's comment for why the
+  #          format has to be pinned that way rather than left to the Accept
+  #          header.
   def duplicate_suggestions
-    render json: duplicate_suggestions_typeahead
+    suggestions = duplicate_suggestions_typeahead
+    respond_to do |format|
+      format.json { render json: suggestions }
+      format.html do
+        render partial: "shared/autocomplete_suggestions",
+               locals: { suggestions: suggestions, term: params[:term] }
+      end
+    end
   end
 
   # Used on references - new instance tab

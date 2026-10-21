@@ -19,10 +19,31 @@
 require "test_helper"
 
 # Single search controller test.
+#
+# NOTES (limit/total redesign): this used to assert that `limit:10`
+# capped a reference's own instance list to 10 rows - that was exactly
+# the behaviour being removed (Instance::AsArray::ForReference no longer
+# takes a limit: from search callers, same as Instance::AsArray::ForName
+# never having had one). Repurposed to assert the new invariant instead:
+# `limit:` still governs how many References a search returns, but no
+# longer truncates any single reference's instance list.
+#
+# NOTES (limit/total redesign, follow-up): originally checked this by
+# parsing a count out of "#search-results-summary" and asserting it was
+# > 10 - that stopped working once the summary count was fixed to mean
+# "how many References matched" (now always "1 record" here, since id:
+# matches exactly one reference) rather than references+instances
+# combined. Checks the actual rendered instance rows instead, which is a
+# more direct assertion of the thing this test protects anyway.
+#
+# Not asserting an exact row count here (bucket_reference_for_default_instances
+# has 36 fixture instances at time of writing, but that's incidental to
+# what this test protects) - what matters is that it's well over the
+# limit:10 that used to cap it.
 class SrchRefsDefQueriesRefIdWInstListHasInstWLimit < ActionController::TestCase
   tests SearchController
 
-  test "search reference id with instances limited" do
+  test "limit: no longer truncates a single reference's instance list" do
     ref = references(:bucket_reference_for_default_instances)
     get(:search,
         params: { query_target: "references",
@@ -31,11 +52,12 @@ class SrchRefsDefQueriesRefIdWInstListHasInstWLimit < ActionController::TestCase
                    user_full_name: "Fred Jones",
                    groups: [] })
     assert_response :success
-    assert_select "#search-results-summary",
-                  /[0-9][0-9] records\b/,
-                  "Should find some records"
-    assert_select "#search-results-summary",
-                  /\b10 records\b/,
-                  "Should say 10 records"
+    assert_select "#search-results-summary", /1 record\b/,
+                  "Should still find exactly 1 reference"
+    assert_select "tr.instance-within-reference-record" do |elements|
+      assert_operator elements.size, :>, 10,
+                       "Expected more than the old limit:10 cap on the " \
+                       "reference's instance rows - got: #{elements.size}"
+    end
   end
 end

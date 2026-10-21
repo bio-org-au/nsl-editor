@@ -1,3 +1,151 @@
+- :date: 21-August-2026
+  :jira_id: '3732'
+  :description: |-
+    Reference plus Instance search: Fix the link offering a search with a higher limit
+- :date: 21-August-2026
+  :jira_id: '3732'
+  :description: |-
+    Reference plus Instance search: Stop including Instances in the count of records returned
+- :date: 20-August-2026
+  :jira_id: '3732'
+  :description: |-
+    Reference plus Instance search: Apply the same limit and count rules as for Name plus Instance search
+- :date: 20-August-2026
+  :jira_id: '5901'
+  :description: |-
+    Typeahead Upgrade: Upgrade typeahead with stimulus autocomplete for the ex author field in the name form
+- :date: 19-August-2026
+  :jira_id: '5894'
+  :description: |-
+    Typeahead Upgrade: Upgrade typeahead with stimulus autocomplete for the base author field in the name form
+- :date: 19-August-2026
+  :jira_id: '5899'
+  :description: |-
+    History of Changes: Add cache-busting param to links for these pages and log a time retrieved on the page.
+- :date: 19-August-2026
+  :jira_id: '5897'
+  :description: |-
+    Create Unpublished Citation: Fix bug that created unpub citations to the current Name instead of to selected Name
+- :date: 18-August-2026
+  :jira_id: '5888'
+  :description: |-
+    Typeahead Upgrade: Adjust the spacings of the autocomplete result items via css
+- :date: 18-August-2026
+  :jira_id: '5896'
+  :description: |-
+    Afd: Avoid 500 error by adding a guard for nil name_rank.family
+- :date: 17-August-2026
+  :jira_id: '5893'
+  :description: |-
+    Name-plus-instance search: Tune this query, make it faster without changing the output
+- :date: 17-August-2026
+  :jira_id: '5801'
+  :description: |-
+    Loader: Make blocking message when review periods overlap more accurate by naming the periods
+- :date: 14-August-2026
+  :jira_id: '3658'
+  :description: |-
+    Preview the name element for a hybrid copy in the copy form, prefill the parents fields, & update the validations
+- :date: 14-August-2026
+  :jira_id: '5884'
+  :description: |-
+    Typeahead Upgrade: Name Duplicate of field trial: adapt code to use the generalised stimulus autocomplete resources
+- :date: 13-August-2026
+  :jira_id: '5891'
+  :description: |-
+    Change the dropdown display for rank field to use the rank.name instead of rank.display_name
+- :date: 13-August-2026
+  :jira_id: '5806'
+  :description: |-
+    Search: Fix bug from earlier changes that allowed an invalid search target into the search target field
+- :date: 13-August-2026
+  :jira_id: '5888'
+  :description: |-
+    Typeahead Upgrade: Name edit form's author field typeahead upgraded to use stimulus autocomplete library
+- :date: 12-August-2026
+  :jira_id: '5890'
+  :description: |-
+    Performance improvements for Reference plus Instance queries - expecting no change to output
+- :date: 12-August-2026
+  :jira_id: '5888'
+  :description: |-
+    Generalise the stimulus autocomplete library to allow it to be used for other typeahead fields in the future
+- :date: 12-August-2026
+  :jira_id: '5884'
+  :description: |-
+    Typeahead Upgrade: Name Duplicate of field trial: scrolling now resets when the suggestion list changes
+- :date: 11-August-2026
+  :jira_id: '5887'
+  :description: |-
+    Loader Batch Elapsed Time reporting: fix conversion of seconds to minutes and seconds format for bulk jobs
+- :date: 11-August-2026
+  :jira_id: '5884'
+  :description: |-
+    Typeahead Upgrade: Name Duplicate of trial - add highlighting of matching characters in the drop down list
+- :date: 11-August-2026
+  :jira_id: '5884'
+  :description: |-
+    Typeahead Upgrade: Name Duplicate of trial - fix styling for hover inverse colours and left margin
+- :date: 10-August-2026
+  :jira_id: '5876'
+  :description: |-
+    Fixup the flaky test around the soft delete name query in minitest
+- :date: 10-August-2026
+  :jira_id: '5884'
+  :description: |-
+    Typeahead Upgrade: Name Duplicate of field upgraded to use autocomplete library
+- :date: 10-August-2026
+  :jira_id: '5876'
+  :description: |-
+    Order the typeahead list of duplicate_of field by rank.sort_order and rank full name
+- :date: 07-August-2026
+  :jira_id: '5670'
+  :description: |-
+    Reference Search: Add <code>has-instance:</code> and <code>has-no-instance:</code> directives
+- :date: 07-August-2026
+  :jira_id: '5880'
+  :description: |-
+    Taxon Link: Only display "taxon link" on Tree tab after tree publication
+- :date: 06-August-2026
+  :jira_id: '5616'
+  :description: |-
+    Batch Loader: Provide query and show flags for "formatted note" entries
+- :date: 06-August-2026
+  :jira_id: '5787'
+  :description: |-
+    Improve duplicate reference display with badge styling
+- :date: 05-August-2026
+  :jira_id: '5869'
+  :description: |-
+    Fixup the style of the test editor button in the top bar on bs5
+- :date: 05-August-2026
+  :jira_id: '5858'
+  :description: |-
+    Run a sweep of the forms to make asterisks indicating mandatory fields consistent
+- :date: 05-August-2026
+  :jira_id: '5872'
+  :description: |-
+    Name search: Add new directive <code>include-common-and-cultivar:</code> and use its abbreviation <code>icc:</code> in the Novel Names link
+- :date: 05-August-2026
+  :jira_id: ''
+  :description: |-
+    Fixup missing badge style for jira ticket with unknown status in the release notes
+- :date: 04-August-2026
+  :jira_id: '4317'
+  :description: |-
+    Instance search : Add directives <code>is-not-novely:</code>, <code>is-relationship:</code>, <code>is-not-relationship:</code>
+- :date: 04-August-2026
+  :jira_id: '5789'
+  :description: |-
+    Reference typeahead: apply chronological order using <code>iso_publication_date</code>
+- :date: 04-August-2026
+  :jira_id: '5862'
+  :description: |-
+    Fixup the loader refgerence tab table outline
+- :date: 04-August-2026
+  :jira_id: '5859'
+  :description: |-
+    Fixup the stretched checkbox in bs5 and the svg icon in the search results table
 - :date: 04-August-2026
   :jira_id: '5867'
   :description: |-
@@ -299,6 +447,8 @@
   :jira_id: '3931'
   :description: |-
     Reference search from Details tab: link to new search for list of novelties sorted by page
+- :date: 05-August-2026
+  :release: true
 - :date: 26-June-2026
   :jira_id: '5837'
   :description: |-

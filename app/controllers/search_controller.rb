@@ -20,6 +20,19 @@ class SearchController < ApplicationController
     run_empty_search_to_show_error(params)
   rescue StandardError => e
     params[:error_message] = e.to_s
+    # NOTES (bug fix): run_empty_search_to_show_error preserves
+    # params[:query_target] onto the error page so a search that failed for
+    # some unrelated reason (bad query string, etc.) still shows the
+    # target the user actually chose - see
+    # query_target_preserved_without_original_test.rb. But when the
+    # target itself is what's invalid (Search::ParsedRequest#preprocess_target's
+    # "Unknown query target '...'" error, below), preserving it means
+    # echoing the raw, unrecognised value straight back into the search
+    # target button/field - not the error message, which is fine and
+    # intentional, but the UI control that's supposed to only ever hold a
+    # real target. Clearing it here for just this one error lets it fall
+    # back to the existing "Names" default instead.
+    params[:query_target] = nil if e.to_s.start_with?("Unknown query target")
     run_empty_search_to_show_error(params)
   end
 
@@ -73,7 +86,19 @@ class SearchController < ApplicationController
     # Avoid "A copy of Search has been removed from the module tree but is still active" error
     # https://stackoverflow.com/questions/29636334/a-copy-of-xxx-has-been-removed-from-the-module-tree-but-is-still-active
     @search = ::Search::Base.new(params)
+    prepare_published_trees_map
     true
+  end
+
+  # NOTES (N+1 fix): instances/taxo/_widgets.html.erb - rendered once per
+  # instance row across several of the search result partials - used to
+  # call instance.in_published_trees individually, one query per row. This
+  # batches that into a single query covering every Instance in the page
+  # of results, so InstancesHelper#published_trees_for can just look each
+  # row up in memory. See Instance::Treeable.published_trees_map_for.
+  def prepare_published_trees_map
+    results = @search.executed_query&.results || []
+    @published_trees_map = Instance.published_trees_map_for(results.grep(Instance))
   end
 
   def run_empty_search

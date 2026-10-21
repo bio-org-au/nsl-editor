@@ -1,17 +1,29 @@
 
   <% if @name.id.present? %>
-  <div class="form-group">
-    <label for="">Duplicate of</label><br>
-    <input id="duplicate-of-typeahead"
-           name="name[duplicate_of_typeahead]"   
-           class="typeahead form-control" 
-           type="text"
-           title="Possible duplicate names will be suggested as you type, so please select from the list or type enough to identify a single name."
-           tabindex="<%= increment_tab_index %>"
-           data-name-id="<%= @name.id %>"
-           value="<%= @name.duplicate_of.try('full_name') %>"/>
-    <%= f.hidden_field(:duplicate_of_id) %>
-  </div>
-  <script> setUpNameDuplicateOf(); </script>
-  <% end %>
+  <%# Duplicate of: powered by the shared stimulus-autocomplete resources
+      (app/views/shared/_autocomplete_field.html.erb and
+      app/javascript/controllers/autocomplete_controller.js) rather than a
+      field-specific subclass/partial/stylesheet of its own - see the
+      Author field (app/views/names/form/_author.html.erb) for the sibling
+      usage these were generalised from. Markup/labels/classes are kept
+      identical to the original field so the GUI is unchanged. Server-side
+      resolution (Name::AsResolvedTypeahead::ForDuplicateOf) is unchanged -
+      it doesn't know or care which JS widget populated these fields,
+      including the typed-exact-match-without-a-pick case.
 
+      extra_params carries the current record's own id through to
+      NamesController#duplicate_suggestions as name_id, so a name is never
+      offered as a duplicate of itself - the same job the old
+      duplicate-of-autocomplete controller subclass's avoidId did via a
+      bespoke buildURL override. %>
+  <%= render "shared/autocomplete_field",
+             f: f,
+             id_attribute: :duplicate_of_id,
+             input_id: "duplicate-of-typeahead",
+             input_name: "name[duplicate_of_typeahead]",
+             input_value: @name.duplicate_of.try("full_name"),
+             label: "Duplicate of",
+             title: "Possible duplicate names will be suggested as you type, so please select from the list or type enough to identify a single name.",
+             url: name_duplicate_suggestions_path(format: :html),
+             extra_params: { name_id: @name.id } %>
+  <% end %>
