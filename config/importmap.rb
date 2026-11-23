@@ -63,7 +63,11 @@ pin "typeaheads_for_author_duplicate_of", to: "typeaheads/for_author/duplicate_o
 
 pin "typeaheads_for_instance_for_name_showing_reference_update",
     to: "typeaheads/for_instance/for_name_showing_reference_update.js"
-pin "typeaheads_for_instance_name", to: "typeaheads/for_instance/name.js"
+# The instance form's Name field (references - new instance tab) uses
+# stimulus-autocomplete - see app/views/shared/_autocomplete_field.html.erb -
+# so typeaheads/for_instance/name.js has gone. The nameByFullName Bloodhound
+# source it also set up is still defined, for its own use, by
+# target_name_for_copy_instances.js below.
 pin "typeaheads_for_instance_target_name_for_copy_instances", to: "typeaheads/for_instance/target_name_for_copy_instances.js"
 pin "typeaheads_for_instance_name_for_unpub_citation", to: "typeaheads/for_instance/name_for_unpub_citation.js"
 pin "typeaheads_for_instance_reference", to: "typeaheads/for_instance/reference.js"
@@ -81,18 +85,20 @@ pin "typeaheads_for_reference_author", to: "typeaheads/for_reference/author.js"
 pin "typeaheads_for_reference_duplicate", to: "typeaheads/for_reference/duplicate.js"
 pin "typeaheads_for_reference_parent", to: "typeaheads/for_reference/parent.js"
 
-# Still needed by the four author fields below; the Author field itself now
-# uses stimulus-autocomplete (app/views/names/form/_author.html.erb).
-pin "typeaheads_for_name_authors_by_abbrev", to: "typeaheads/for_name/authors_by_abbrev_bloodhound.js"
-pin "typeaheads_for_name_cultivar_parent", to: "typeaheads/for_name/cultivar_parent.js"
-pin "typeaheads_for_name_cultivar_second_parent", to: "typeaheads/for_name/cultivar_second_parent.js"
-pin "typeaheads_for_name_ex_author", to: "typeaheads/for_name/ex_author.js"
-pin "typeaheads_for_name_ex_base_author", to: "typeaheads/for_name/ex_base_author.js"
-pin "typeaheads_for_name_family", to: "typeaheads/for_name/family.js"
-pin "typeaheads_for_name_hybrid_parent", to: "typeaheads/for_name/hybrid_parent.js"
-pin "typeaheads_for_name_parent", to: "typeaheads/for_name/parent.js"
-pin "typeaheads_for_name_sanctioning_author", to: "typeaheads/for_name/sanctioning_author.js"
-pin "typeaheads_for_name_second_parent", to: "typeaheads/for_name/second_parent.js"
+# All five name-author fields (Author, Base, Ex, Ex Base, Sanctioning) now
+# use stimulus-autocomplete - see app/views/shared/_autocomplete_field.html.erb -
+# so the Bloodhound source they shared has gone with the last of them.
+
+# The Bloodhound source below is now needed only by Sanctioning Author -
+# the last name-author field still on typeahead.js. The other four
+# (Author, Base, Ex, Ex Base) use stimulus-autocomplete, see
+# app/views/shared/_autocomplete_field.html.erb.
+
+# The name form's Parent and Second parent fields all use
+# stimulus-autocomplete now (app/views/names/form/_parent_1.html.erb and
+# _parent_2.html.erb), so the Bloodhound sources and set-up functions they
+# used - cultivar_parent.js, cultivar_second_parent.js, hybrid_parent.js and
+# second_parent.js - have gone.
 pin "typeaheads_for_name_workspace_parent_name", to: "typeaheads/for_name/workspace_parent_name.js"
 
 pin "markdown_it_sub_min", to: "https://cdn.jsdelivr.net/npm/markdown-it-sub/dist/markdown-it-sub.min.js"

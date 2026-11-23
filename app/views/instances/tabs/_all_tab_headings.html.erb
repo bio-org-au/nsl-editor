@@ -44,7 +44,9 @@
     %>
   <% end %>
 
-  <% if @tabs_to_offer.include?("tab_edit_profile_v2") && can?(:manage_draft_secondary_reference, @instance) && tab_available?(tabs_array, "edit_profile") %>
+  <% if @tabs_to_offer.include?("tab_edit_profile_v2") &&
+      can?(:manage_draft_secondary_reference, @instance) &&
+      tab_available?(tabs_array, "edit_profile") %>
     <%= render(
       partial: "instances/tabs/tab",
       locals: {

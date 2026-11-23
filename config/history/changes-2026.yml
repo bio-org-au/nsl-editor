@@ -1,3 +1,119 @@
+- :date: 22-September-2026
+  :jira_id: '5933'
+  :description: |-
+    Update the wording of the audit display for api name/at to use Bulk Changed instead of Record changed by and use the new helper method
+- :date: 21-September-2026
+  :jira_id: '5932'
+  :description: |-
+    Switch the display of the migrated from and bulk changed informations in the reference details
+- :date: 21-September-2026
+  :jira_id: '5932'
+  :description: |-
+    Display audit records for api_name and api_at in the details tab for reference
+- :date: 21-September-2026
+  :jira_id: '5906'
+  :description: |-
+    Backend model validation for instance and name soft delete
+- :date: 18-September-2026
+  :jira_id: '5927'
+  :description: |-
+    Simulate bundler 4 when bundling gems
+- :date: 17-September-2026
+  :jira_id: '5906'
+  :description: |-
+    Remove the delay message when placing, replacing, or removing an instance in a tree and use the view table to check for instance tree placement instead
+- :date: 15-September-2026
+  :jira_id: '5924'
+  :description: |-
+    Setup a github dependabot.yml config
+- :date: 15-September-2026
+  :jira_id: '5923'
+  :description: |-
+    Prevent users entering more than 50 chars in the <code>reference.publication_date</code> field
+- :date: 15-September-2026
+  :jira_id: '5550'
+  :description: |-
+    Offer the name submenu in the top menu for users with name_index_editor role AND product with is_name_index_editor: true
+- :date: 15-September-2026
+  :jira_id: '5915'
+  :description: |-
+    Typeahead upgrade: Upgrade the instance name typeahead fields in the instance form to use stimulus autocomplete
+- :date: 11-September-2026
+  :jira_id: '5921'
+  :description: |-
+    Fixup the sample service URL for the reference strings service on the admin page
+- :date: 11-September-2026
+  :jira_id: '5921'
+  :description: |-
+    Update the admin page to display a dynamic examples of the service endpoints
+- :date: 10-September-2026
+  :jira_id: '5917'
+  :description: |-
+    Typeahead upgrade: Upgrade the cultivar hybrid parent typeahead fields in the name form to use stimulus autocomplete
+- :date: 10-September-2026
+  :jira_id: '5919'
+  :description: |-
+    Admin page update to display latest config or env vars
+- :date: 09-September-2026
+  :jira_id: '5918'
+  :description: |-
+    Use batch_reviewer flag to determine whether to show the batch review link in the user menu
+- :date: 08-September-2026
+  :jira_id: '5916'
+  :description: |-
+    Typeahead upgrade: Upgrade the hybrid parent typeahead fields in the name form to use stimulus autocomplete
+- :date: 08-September-2026
+  :jira_id: '5914'
+  :description: |-
+    Typeahead upgrade: Upgrade the family typeahead field in the name form to use stimulus autocomplete
+- :date: 07-September-2026
+  :jira_id: '5913'
+  :description: |-
+    Typeahead upgrade: Upgrade the parent typeahead field in the name form to use stimulus autocomplete
+- :date: 07-September-2026
+  :jira_id: '5912'
+  :description: |-
+    Typeahead upgrade: Upgrade the sanctioning author field in the name form to use stimulus autocomplete
+- :date: 03-September-2026
+  :jira_id: '5911'
+  :description: |-
+    Typeahead upgrade: Upgrade the ex base name author field in the name form to use stimulus autocomplete
+- :date: 02-September-2026
+  :jira_id: '5906'
+  :description: |-
+    Add a delay notice for tree changes (e.g placing, replacing, or removing instance in a tree)
+- :date: 01-September-2026
+  :jira_id: '5904'
+  :description: |-
+    Soft-delete: Update the messaging for the soft-deleted names and instances according to their tree placement
+- :date: 01-September-2026
+  :jira_id: '5905'
+  :description: |-
+    Soft delete permissions: Don't allow editing or modifying soft-deleted instances
+- :date: 31-August-2026
+  :jira_id: '5905'
+  :description: |-
+    Soft delete permissions: Don't allow editing or modifying soft-deleted names
+- :date: 31-August-2026
+  :jira_id: '5905'
+  :description: |-
+    Soft delete permissions: Don't offer the edit and other tabs for a soft-deleted instance except for the Details tab
+- :date: 31-August-2026
+  :jira_id: '5905'
+  :description: |-
+    Soft delete permissions: Don't offer the edit and other tabs for a soft-deleted name except for the Details tab
+- :date: 28-August-2026
+  :jira_id: '5806'
+  :description: |-
+    Loader Name Search: Fix bug from earlier changes in which a default batch over-rode the <code>any-batch:</code> directive
+- :date: 26-August-2026
+  :jira_id: '5908'
+  :description: |-
+    Fixup the user's created_by and updated_by fields not setting the current_user's username when creating or updating a user
+- :date: 21-August-2026
+  :jira_id: '5905'
+  :description: |-
+    Soft delete: Don't offer the edit and other tabs for a soft-deleted instance except for the Details tab
 - :date: 21-August-2026
   :jira_id: '3732'
   :description: |-
@@ -294,6 +410,8 @@
   :jira_id: '5854'
   :description: |-
     Service object and feature flag for soft delete of instances
+- :date: 08-September-2026
+  :release: true
 - :date: 17-July-2026
   :jira_id: '3228'
   :description: |-

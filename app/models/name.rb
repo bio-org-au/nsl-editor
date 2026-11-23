@@ -94,6 +94,7 @@ class Name < ApplicationRecord
   include AuditScopable
   include UserTrackable
   include Name::Validatable
+  include SoftDeletable
   include Name::Parentable
   include Name::Familyable
   include Name::NamePathable
@@ -135,6 +136,7 @@ class Name < ApplicationRecord
   has_many :name_tags, through: :name_tag_names
   has_many :tree_nodes # not sure what this is, looks like a thought bubble
   has_many :tree_elements
+  has_many :tree_join_v
   has_many :intended_tree_children,
            class_name: "Loader::Name::Match",
            foreign_key: "intended_tree_parent_name_id"
@@ -194,10 +196,9 @@ class Name < ApplicationRecord
       !family_dependents?
   end
 
-  def allow_soft_delete?
-    return false unless Rails.configuration.try(:soft_delete_enabled)
-
-    ::Names::CheckDeleteService.new(name: self).execute.soft_delete_allowed?
+  # Required by SoftDeletable - the delete rules live in the database.
+  def check_delete_result
+    ::Names::CheckDeleteService.new(name: self).execute
   end
 
   def no_name_resource_dependents?

@@ -18,6 +18,7 @@
     <tr><td>Ruby version</td><td> <%= RUBY_VERSION %> </td></tr>
 
     <tr><td>Rails</td><td> <%= Rails::VERSION::STRING %> </td></tr>
+    <tr><td>Bundler</td><td> <%= Bundler::VERSION %><% if (simulated = Bundler.settings[:simulate_version]) %> (simulating Bundler <%= simulated %>)<% end %> </td></tr>
 
     <tr><td>Schema version</td><td> <%= DbVersion.current %> </td></tr>
     <tr><td>Application version</td><td> <%= Rails.configuration.try('version') %> </td></tr>
@@ -96,7 +97,7 @@
     <tr><td>ldap_users</td><td> <%= Rails.configuration.try(:ldap_users) %> </td></tr>
     <tr><td>ldap_groups</td><td> <%= Rails.configuration.try(:ldap_groups) %> </td></tr>
     <tr><td>ldap_generic_users</td> <td> <%= Rails.configuration.try(:ldap_generic_users) %> </td></tr>
-    <tr><td>group_filter_regex</td> <td> <%= Rails.configuration.try(:group_filter_regex) %> </td></tr>
+    <tr><td>ldap_group_filter_regex</td> <td> <%= Rails.configuration.try(:ldap_group_filter_regex) %> </td></tr>
 
 
     <tr><td colspan="2">&nbsp;</td></tr>
@@ -135,19 +136,19 @@
 
     <tr><td colspan="2"><strong>Services that do not change data</strong></td></tr>
 
-    <% service_url = "#{Rails.configuration.try(:services_clientside_root_url)}rest/name/apni/91759/api/apc.json" %>
+    <% service_url = admin_service_url("name", "apc.json") %>
     <tr><td class="width-40-percent min-width-10em" >In the accepted taxonomy?</td><td> <%= link_to(service_url, service_url, title: 'Link to the "in APC?" client-side service.') %> </td></tr>
 
-    <% service_url = "#{Rails.configuration.try(:services_clientside_root_url)}rest/name/apni/91759/api/apni.json" %>
+    <% service_url = admin_service_url("name", "apni.json") %>
     <tr><td class="width-40-percent min-width-10em" >In the nomenclatural set? </td><td> <%= link_to(service_url, service_url, title: 'Link to the "in APNI?" client-side service.') %> </td></tr>
 
-    <% service_url = "#{Rails.configuration.try(:services_clientside_root_url)}rest/name/apni/91759/api/family.json" %>
-    <tr><td>APNI Name Information</td><td> <%= link_to(service_url, service_url, title: 'Link to an APNI name information service.') %> </td></tr>
+    <% service_url = admin_service_url("name", "family.json") %>
+    <tr><td><%= admin_services_product.upcase %> Name Information</td><td> <%= link_to(service_url, service_url, title: "Link to a #{admin_services_product} name information service.") %> </td></tr>
 
-    <% service_url = "#{Rails.configuration.try(:services_clientside_root_url)}rest/name/apni/91759/api/name-strings.json" %>
+    <% service_url = admin_service_url("name", "name-strings.json") %>
     <tr><td>Name strings</td><td> <%= link_to(service_url, service_url, title: 'Link to the name strings client-side service.') %> </td></tr>
 
-    <% service_url = "#{Rails.configuration.try(:services_clientside_root_url)}rest/reference/apni/17525/api/citation-strings.json" %>
+    <% service_url = admin_service_reference_url("reference", "citation-strings.json") %>
     <tr><td>Reference strings</td><td> <%= link_to(service_url, service_url, title: 'Link to the reference strings client side service.') %> </td></tr>
     </table>
 
@@ -197,7 +198,7 @@
     <tr><td class="width-40-percent min-width-10em">batch_loader_delete_syn_conflicts_aware</td><td> <%= Rails.configuration.try(:batch_loader_delete_syn_conflicts_aware) || false %> </td></tr>
     <tr><td class="width-40-percent min-width-10em">batch_loader_usage_order_aware</td><td> <%= Rails.configuration.try(:batch_loader_usage_order_aware) || false %> </td></tr>
     <tr><td class="width-40-percent min-width-10em">profile_v2_aware</td><td> <%= Rails.configuration.try(:profile_v2_aware) || false %> </td></tr>
-    <tr><td class="width-40-percent min-width-10em">profile_v2_profile_v2_dropdown_ui</td><td> <%= Rails.configuration.try(:profile_v2_dropdown_ui) || false %> </td></tr>
+    <tr><td class="width-40-percent min-width-10em">profile_v2_dropdown_ui</td><td> <%= Rails.configuration.try(:profile_v2_dropdown_ui) || false %> </td></tr>
     <tr><td class="width-40-percent min-width-10em">unsaved_form_prompt_enabled</td><td> <%= Rails.configuration.try(:unsaved_form_prompt_enabled) || false %> </td></tr>
     <tr><td class="width-40-percent min-width-10em">site_wide_form_prompt_enabled</td><td> <%= Rails.configuration.try(:site_wide_form_prompt_enabled) || false %> </td></tr>
     <tr><td class="width-40-percent min-width-10em">multi_product_tabs_enabled</td><td> <%= Rails.configuration.try(:multi_product_tabs_enabled) || false %> </td></tr>

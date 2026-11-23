@@ -2,32 +2,77 @@ module Name::Typeaheads
   extend ActiveSupport::Concern
 
   # For the typeahead search.
+  #
+  # Two response formats over the one query, matching
+  # AuthorsController#typeahead_on_abbrev:
+  #   json - kept for parity with the other suggestion actions; nothing in
+  #          this app's own views still asks for it.
+  #   html - the fragment of <li role="option"> elements stimulus-autocomplete
+  #          expects, see app/views/shared/_autocomplete_suggestions.html.erb.
+  #          The name form's Parent field asks for this by extension - see
+  #          AuthorsController#typeahead_on_abbrev's comment for why the format
+  #          has to be pinned that way rather than left to the Accept header.
+  #
+  # data_keys publishes each suggestion's family alongside its id, because
+  # choosing a parent also fills in the form's Family field - see
+  # app/javascript/controllers/name_parent_family_controller.js.
   def name_parent_suggestions
     typeahead = Name::AsTypeahead::ForParent.new(params)
-    render json: typeahead.suggestions
+    respond_to do |format|
+      format.json { render json: typeahead.suggestions }
+      format.html do
+        render partial: "shared/autocomplete_suggestions",
+               locals: { suggestions: typeahead.suggestions,
+                         term: params[:term],
+                         data_keys: %i[family_id family_value] }
+      end
+    end
   end
 
+  # For the name form's Family field.
+  #
+  # Two response formats over the one query, as for #name_parent_suggestions
+  # above:
+  #   json - kept for parity with the other suggestion actions; nothing in
+  #          this app's own views still asks for it.
+  #   html - the fragment of <li role="option"> elements stimulus-autocomplete
+  #          expects, which the Family field asks for by extension.
   def name_family_suggestions
     typeahead = Name::AsTypeahead::ForFamily.new(params)
-    render json: typeahead.suggestions
+    respond_to do |format|
+      format.json { render json: typeahead.suggestions }
+      format.html do
+        render partial: "shared/autocomplete_suggestions",
+               locals: { suggestions: typeahead.suggestions,
+                         term: params[:term] }
+      end
+    end
   end
 
-  # Columns such as parent and duplicate_of_id use a typeahead search.
+  # Suggests the parent of a cultivar name.
+  #
+  # Both a cultivar's Parent field and a cultivar hybrid's Second parent
+  # field are on stimulus-autocomplete and ask for html - see
+  # #name_parent_suggestions; json is kept for parity with the other
+  # suggestion actions. No family is sent with a cultivar's suggestions, so
+  # picking one leaves the Family field alone, as it always has.
   def cultivar_parent_suggestions
-    render json: [] if params[:term].blank?
-    render json: Name::AsTypeahead \
+    suggestions = Name::AsTypeahead \
       .cultivar_parent_suggestions(params[:term],
                                    params[:name_id],
                                    params[:rank_id])
+    render_parent_suggestions(suggestions)
   end
 
-  # Columns such as parent and duplicate_of_id use a typeahead search.
+  # Suggests the parent of a hybrid name. Both the Parent and Second parent
+  # fields of a hybrid are on stimulus-autocomplete and ask for html; json
+  # is kept for parity with the other suggestion actions.
   def hybrid_parent_suggestions
-    render json: [] if params[:term].blank?
-    render json: Name::AsTypeahead \
+    suggestions = Name::AsTypeahead \
       .hybrid_parent_suggestions(params[:term],
                                  params[:name_id],
                                  params[:rank_id])
+    render_parent_suggestions(suggestions)
   end
 
   # Columns such as parent and duplicate_of_id use a typeahead search.
@@ -54,13 +99,39 @@ module Name::Typeaheads
     end
   end
 
-  # Used on references - new instance tab
+  # Used on references - new instance tab, for the Name field of the
+  # instance form (app/views/instances/_form_create_from_reference.html.erb).
+  #
+  # Two response formats over the one query, as for #duplicate_suggestions
+  # above:
+  #   json - what the field asked for while it was on typeahead.js; kept
+  #          for parity with the other suggestion actions, nothing in this
+  #          app's own views still asks for it.
+  #   html - the fragment of <li role="option"> elements stimulus-autocomplete
+  #          expects, which the Name field asks for by extension.
   def typeahead_on_full_name
     typeahead = Name::AsTypeahead::OnFullName.new(params)
-    render json: typeahead.suggestions
+    respond_to do |format|
+      format.json { render json: typeahead.suggestions }
+      format.html do
+        render partial: "shared/autocomplete_suggestions",
+               locals: { suggestions: typeahead.suggestions,
+                         term: params[:term] }
+      end
+    end
   end
 
   private
+
+  def render_parent_suggestions(suggestions)
+    respond_to do |format|
+      format.json { render json: suggestions }
+      format.html do
+        render partial: "shared/autocomplete_suggestions",
+               locals: { suggestions: suggestions, term: params[:term] }
+      end
+    end
+  end
 
   def typeahead_params
     params.require(:name).permit(:author_id,

@@ -19,6 +19,29 @@
 # Central authorisations
 class Ability
   include CanCan::Ability
+
+  # Actions that change a name, or hang new data off it.
+  # A soft deleted name is read only, so none of these are allowed once
+  # deleted_at is set - see #soft_deleted_name_auth.
+  SOFT_DELETE_RESTRICTED_NAME_ACTIONS = %i[
+    modify
+    update
+    update_common_name
+    destroy
+  ].freeze
+  # Actions that change an instance, or hang new data off it.
+  # A soft deleted instance is read only, so none of these are allowed once
+  # deleted_at is set - see #soft_deleted_instance_auth.
+  #
+  # :create is deliberately not listed - it is checked against the Instance
+  # class as often as against a record, and a class check cannot see the
+  # deleted_at of any one instance. Views gate creation with :modify instead.
+  SOFT_DELETE_RESTRICTED_INSTANCE_ACTIONS = %i[
+    modify
+    destroy
+    change_name
+  ].freeze
+
   # The first argument to `can` is the action you are giving the user
   # permission to do.
   # If you pass :manage it will apply to every action. Other common actions
@@ -70,6 +93,31 @@ class Ability
     name_index_editor(user) if user.with_role?('name-index-editor') && is_name_index
     common_name_editor(user) if user.with_role_for_context?('common-name') && not_name_index
     product_admin_auth(user) if user.with_role?('admin')
+
+    # A soft deleted name can still be viewed, but not changed, whatever roles
+    # the user has.
+    soft_deleted_name_auth
+
+    # A soft deleted instance can still be viewed, but not changed, whatever
+    # roles the user has.
+    soft_deleted_instance_auth
+  end
+
+  #
+  # :modify is the "this record is still open for change" check. It is granted
+  # to everyone, so it is not a permission on its own - views and controllers
+  # combine it with the role check for the action being offered, e.g.
+
+  # can?(:create, Instance) && can?(:modify, @name).
+  def soft_deleted_name_auth
+    can :modify, Name
+    cannot SOFT_DELETE_RESTRICTED_NAME_ACTIONS, Name, &:soft_deleted?
+  end
+
+  # can?(:edit, @instance) && can?(:modify, @instance).
+  def soft_deleted_instance_auth
+    can :modify, Instance
+    cannot SOFT_DELETE_RESTRICTED_INSTANCE_ACTIONS, Instance, &:soft_deleted?
   end
 
   def user
@@ -279,6 +327,7 @@ class Ability
 
   def name_index_editor(user)
     can :manage,              Author
+    can :manage,              Name
     can [:create, :read, :destroy], Reference
     can :update, Reference
     can [:create, :edit, :update, :destroy], Instance
@@ -292,6 +341,7 @@ class Ability
     can "names",              :all
     can "names_deletes",      :all
     can "instances/soft_deletes", :all
+    can "names/soft_deletes", :all
     can "references",         :all
     can "names/typeaheads/for_unpub_cit", :all
     can "loader/batch/review/mode", "switch_off"
@@ -380,6 +430,7 @@ class Ability
     can "names",              :all
     can "names_deletes",      :all
     can "instances/soft_deletes", :all
+    can "names/soft_deletes", :all
     can "references",         :all
     can "names/typeaheads/for_unpub_cit", :all
     can "loader/batch/review/mode", "switch_off"

@@ -143,7 +143,6 @@ RSpec.describe TabsHelper, type: :helper do
 
     context "when the user cannot manage Name" do
       before do
-        manage_name = false
         name_ref = name_with_common_type
         helper.define_singleton_method(:can?) do |action, subject|
           action == :update_common_name && subject == name_ref
@@ -165,6 +164,26 @@ RSpec.describe TabsHelper, type: :helper do
 
       it "returns false" do
         expect(helper.can_edit_name?(name_with_scientific_type)).to be false
+      end
+    end
+
+    # can_edit_name? is a role check only. A soft deleted name is kept read
+    # only by the :modify check inside each tab partial, not here - see
+    # Ability#soft_deleted_name_auth.
+    context "when the name has been soft deleted" do
+      it "still returns true when the user can manage Name" do
+        helper.define_singleton_method(:can?) { |action, _subject| action != :modify }
+
+        expect(helper.can_edit_name?(name_with_scientific_type)).to be true
+      end
+
+      it "still returns true for a common name the user can update" do
+        name_ref = name_with_common_type
+        helper.define_singleton_method(:can?) do |action, subject|
+          action == :update_common_name && subject == name_ref
+        end
+
+        expect(helper.can_edit_name?(name_with_common_type)).to be true
       end
     end
 

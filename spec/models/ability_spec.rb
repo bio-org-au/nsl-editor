@@ -1172,6 +1172,10 @@ RSpec.describe Ability, type: :model do
         expect(subject.can?("instances/soft_deletes", :all)).to eq true
       end
 
+      it "allows all actions on name soft deletes" do
+        expect(subject.can?("names/soft_deletes", :all)).to eq true
+      end
+
       it "allows all actions on references" do
         expect(subject.can?("references", :all)).to eq true
       end
@@ -1198,6 +1202,14 @@ RSpec.describe Ability, type: :model do
     context "when managing resources" do
       it "allows managing Author" do
         expect(subject.can?(:manage, Author)).to eq true
+      end
+
+      it "allows managing Name" do
+        expect(subject.can?(:manage, Name)).to eq true
+        expect(subject.can?(:create, Name)).to eq true
+        expect(subject.can?(:read, Name)).to eq true
+        expect(subject.can?(:update, Name)).to eq true
+        expect(subject.can?(:destroy, Name)).to eq true
       end
 
       it "allows creating, reading, and destroying Reference" do
@@ -1228,6 +1240,10 @@ RSpec.describe Ability, type: :model do
         expect(subject.can?(:manage, Author)).to eq true
       end
 
+      it 'can still manage Name' do
+        expect(subject.can?(:manage, Name)).to eq true
+      end
+
       it 'can still update Reference' do
         reference = create(:reference)
         expect(subject.can?(:update, reference)).to eq true
@@ -1241,6 +1257,12 @@ RSpec.describe Ability, type: :model do
 
       it 'cannot manage Author' do
         expect(subject.can?(:manage, Author)).to eq false
+      end
+
+      it 'cannot manage Name' do
+        expect(subject.can?(:manage, Name)).to eq false
+        expect(subject.can?(:update, Name)).to eq false
+        expect(subject.can?(:destroy, Name)).to eq false
       end
 
       it 'cannot update Reference' do
@@ -1288,6 +1310,10 @@ RSpec.describe Ability, type: :model do
 
       it "allows all actions on instance soft deletes" do
         expect(subject.can?("instances/soft_deletes", :all)).to eq true
+      end
+
+      it "allows all actions on name soft deletes" do
+        expect(subject.can?("names/soft_deletes", :all)).to eq true
       end
 
       it "allows all actions on references" do
@@ -1917,5 +1943,39 @@ RSpec.describe Ability, type: :model do
     end
   end
 
-end
 
+  describe "#soft_deleted_instance_auth" do
+    let(:session_user) { create(:session_user, :edit) }
+    let(:live_instance) { create(:instance) }
+    let(:soft_deleted_instance) { create(:instance, deleted_at: Time.current) }
+
+    # Every restricted action is withdrawn once deleted_at is set, whatever
+    # role granted it in the first place.
+    Ability::SOFT_DELETE_RESTRICTED_INSTANCE_ACTIONS.each do |action|
+      it "denies '#{action}' on a soft deleted instance" do
+        expect(subject.can?(action, soft_deleted_instance)).to eq false
+      end
+    end
+
+    # The subset an 'edit' group user holds - proving the rule withdraws a
+    # permission the user really had, rather than one they never had.
+    %i[modify edit update destroy].each do |action|
+      it "allows '#{action}' on an instance that has not been soft deleted" do
+        expect(subject.can?(action, live_instance)).to eq true
+      end
+    end
+
+    it "still allows a soft deleted instance to be read" do
+      expect(subject.can?("instances", "tab_show_1")).to eq true
+    end
+
+    it "does not withdraw the class level create permission" do
+      expect(subject.can?(:create, Instance)).to eq true
+    end
+
+    it "leaves name permissions alone" do
+      expect(subject.can?(:modify, create(:name))).to eq true
+    end
+  end
+
+end

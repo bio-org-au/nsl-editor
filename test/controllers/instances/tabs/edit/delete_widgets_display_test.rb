@@ -64,7 +64,12 @@ class InstanceEditTabDeleteWidgetsTest < ActionController::TestCase
                   "Should not show the hard delete link."
   end
 
-  test "shows soft-deleted message when instance is already soft-deleted" do
+  # A soft deleted instance is read only - see
+  # Ability#soft_deleted_instance_auth. Only :modify is withdrawn, so the user
+  # keeps the :edit role and the edit heading is still offered; the tab
+  # partial's own `can?(:modify, @instance)` guard is what refuses the editing
+  # content, and it says why.
+  test "serves the soft-deleted message in place of edit content when instance is already soft-deleted" do
     Instance.stub_any_instance(:allow_delete?, false) do
       Instance.stub_any_instance(:allow_soft_delete?, true) do
         Instance.stub_any_instance(:deleted_at, Time.current) do
@@ -73,7 +78,18 @@ class InstanceEditTabDeleteWidgetsTest < ActionController::TestCase
       end
     end
     assert_response :success
-    assert_match(/Instance has been soft-deleted at/, response.body)
+    assert_select "a#instance-show-tab", "Details",
+                  "Should offer the details tab."
+    assert_select "a#instance-edit-tab", "Edit",
+                  "Should still offer the edit tab heading."
+    assert_match(/This instance has been soft-deleted and cannot be modified/,
+                 response.body,
+                 "Should say why the edit form is missing.")
+    assert_no_match(/The selected tab does not apply to the current instance/,
+                    response.body,
+                    "Should not fall back to the empty tab.")
+    assert_select "form", false,
+                  "Should not render any editing form."
     assert_select "a#instance-soft-delete-link", false,
                   "Should not show the soft delete link."
     assert_select "a#instance-delete-link", false,

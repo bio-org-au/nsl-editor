@@ -15,12 +15,20 @@ export default class extends Controller {
     connector: String
   }
 
-  // Namespaced so disconnect() can unbind only our handlers.
-  static PARENT_EVENTS =
-    "typeahead:selected.copyNamePreview typeahead:autocompleted.copyNamePreview " +
-    "typeahead:change.copyNamePreview input.copyNamePreview change.copyNamePreview"
+  // Namespaced so disconnect() can unbind only our handlers. These cover
+  // the fields clearing their hidden id when the user types again.
+  static PARENT_EVENTS = "input.copyNamePreview change.copyNamePreview"
+
+  // Both parents are stimulus-autocomplete fields (see
+  // app/views/names/form/_parent_1.html.erb and _parent_2.html.erb), which
+  // announce a pick with their own bubbling event. jQuery reads the "." in
+  // the name as a namespace separator, so this one is bound natively - on
+  // this element, the form, which the event reaches on its way up from
+  // either field.
+  static AUTOCOMPLETE_EVENT = "autocomplete.change"
 
   connect() {
+    this.onParentChange = () => setTimeout(() => this.updatePreview(), 0)
     this.watchParents()
     this.updatePreview()
   }
@@ -28,14 +36,17 @@ export default class extends Controller {
   disconnect() {
     window.$("#name-parent-typeahead, #name-second-parent-typeahead")
       .off(".copyNamePreview")
+    this.element.removeEventListener(this.constructor.AUTOCOMPLETE_EVENT,
+                                     this.onParentChange)
   }
 
   // The typeaheads set their hidden id fields in their own handlers for these
   // events, so update on the next tick rather than racing them.
   watchParents() {
     window.$("#name-parent-typeahead, #name-second-parent-typeahead")
-      .on(this.constructor.PARENT_EVENTS,
-          () => setTimeout(() => this.updatePreview(), 0))
+      .on(this.constructor.PARENT_EVENTS, this.onParentChange)
+    this.element.addEventListener(this.constructor.AUTOCOMPLETE_EVENT,
+                                  this.onParentChange)
   }
 
   // "first parent x second parent", from whichever parents have been chosen.

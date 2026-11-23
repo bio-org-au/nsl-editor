@@ -89,6 +89,10 @@ class TaxFormsTreeBuilderAPCUserCanReplacePlacementOnAPCDraftTest < ActionContro
                     groups: ["login"]})
     assert_response :success, 'APC tree builder should be able to replace_placement on APC draft entry'
     assert_template "moved_placement"
+    assert_includes @response.body, 'refreshTreeTab',
+                    'Replacing should offer a refresh button'
+    refute_includes @response.body, "$('#instance-classification-tab').click()",
+                    'Replacing should not reload the tree tab immediately'
   end
 end
 

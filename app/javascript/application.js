@@ -61,7 +61,6 @@ import "typeaheads_for_author_duplicate_of";
 
 import "typeaheads_for_instance_for_name_showing_reference_update";
 import "typeaheads_for_instance_target_name_for_copy_instances";
-import "typeaheads_for_instance_name";
 import "typeaheads_for_instance_name_for_unpub_citation";
 import "typeaheads_for_instance_reference";
 import "typeaheads_for_instance_reference_profile_v2";
@@ -78,15 +77,6 @@ import "typeaheads_for_reference_author";
 import "typeaheads_for_reference_duplicate";
 import "typeaheads_for_reference_parent";
 
-import "typeaheads_for_name_authors_by_abbrev";
-import "typeaheads_for_name_cultivar_parent";
-import "typeaheads_for_name_cultivar_second_parent";
-import "typeaheads_for_name_ex_base_author";
-import "typeaheads_for_name_family";
-import "typeaheads_for_name_hybrid_parent";
-import "typeaheads_for_name_parent";
-import "typeaheads_for_name_sanctioning_author";
-import "typeaheads_for_name_second_parent";
 import "typeaheads_for_name_workspace_parent_name";
 
 import "markdown_it_sub_min";

@@ -18,25 +18,26 @@
 
 class Names::SoftDeletesController < ApplicationController
   before_action :find_name, only: [:create]
+  before_action :authorise_name_change, only: [:create]
 
   def create
-    # set name as soft-deleted
-    if @name.allow_soft_delete?
-      @name.current_user = current_user
-      @name.deleted_at = Time.current
-      unless @name.save
-        @message = @name.errors.full_messages.join("; ")
-        return render "create_error", status: :unprocessable_content
-      end
-    else
-      @message = "Soft delete not allowed for this name."
-      return render "create_error", status: :unprocessable_content
-    end
+    @name.current_user = current_user
+    @name.deleted_at = Time.current
+    return if @name.save
+
+    @message = @name.errors.full_messages.join("; ")
+    render "create_error", status: :unprocessable_content
   end
 
   private
 
   def find_name
     @name = Name.find(params[:name_id])
+  end
+
+  # An already soft deleted name is read only - see
+  # Ability#soft_deleted_name_auth.
+  def authorise_name_change
+    authorize!(:modify, @name)
   end
 end
